@@ -1,4 +1,4 @@
-
+require 'pry'
 require_relative '../../config/environment'
 
 class ApplicationController < Sinatra::Base
@@ -8,28 +8,57 @@ class ApplicationController < Sinatra::Base
     set :views, 'app/views'
   end
 
-  get '/articles' do 
+  get '/model/:id' do 
+    @model = Model.all.find(self.params[:id])
+   
 
-    erb :index
+    erb :'index.html'
   end
 
-  get '/articles/new' do
+  post '/model' do
 
-    erb :new
+  end
+  
+  get '/' do
+    @models = Model.all
+    @accounts = Account.all
+
+    erb :'index.html'
+
   end
 
-  get '/articles/:id' do 
-    @article = Article.find(params[:id])
-    
-    erb :show
+  post '/' do
+    puts "There were #{Proposal.all.count} proposals."
+    Proposal.create(account_id: Account.find(params[:account_id]).id)
+
+
+    params.each do |k,v|
+      if v == "on"
+        Proposal.all.last.units.create(model_id: k.to_i)
+      end
+    end
+    puts "Now there are #{Proposal.all.count} proposals."
+
+    redirect to "proposals/#{Proposal.all.last.id}"
   end
 
-  get '/articles/:id/edit' do
-    @article = Article.find(params[:id])
+  get '/proposals/:id/edit' do
+    @proposal = Proposal.find(params[:id])
 
-    erb :edit
+    erb :'edit_proposal.html'
   end
 
+  get '/proposals/:id' do 
+    @proposal = Proposal.find(params[:id])
+
+    erb :'show_proposal.html'
+  end
+
+
+  post '/articlesparams' do
+    binding.pry
+
+  end
   patch '/articles/:id' do 
     id = params[:id]
     Article.find(id).update(title: params[:title], content: params[:content])

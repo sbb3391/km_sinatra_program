@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>  
+  <style>
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th {
+    padding: 15px;
+  }
+
+  table {
+   border-spacing: 5px;
+   width: 50%;
+  }
+
+  tr th:nth-child(1) {
+  width: 5%;
+}
+
+  tr th:nth-child(2) {
+  width: 10%;
+}
+
+  tr th:nth-child(3) {
+  width: 30%;
+}
+
+  tr th:nth-child(4) {
+  width: 40%;
+}
+
+thead th:nth-child(5) {
+  width: 15%;
+}
+
+  .qty {
+    width: 40px;
+    padding: 8px;
+    border: 0;
+  }
+
+  td {
+    font-size: 14px;
+    padding: 8px;
+  }
+  </style>
+</head>
+
+<h1>Please choose a quantity for the models you have chosen, and a quantity for the accessories you need for each model:</h1>
+
+<form action="" method="POST">
+  <table>
+    <tr>
+      <th>Quantity</th>
+      <th>Product id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Unit Price</th>
+    </tr>
+    <% @proposal.units.each do |unit| %>
+      <tr>
+        <td><input class="qty" type="number" name="<%= unit.model.id %>"></td>
+        <td><%= unit.model.name %></td>
+        <td><%= unit.model.name %></td>
+        <td><%= unit.model.name %></td>
+        <td><%= unit.model.price %></td>
+      </tr>
+      <% unit.model.accessories.each do |accessory| %>
+      <tr>
+        <td><input class="qty" type="number" name="<%= accessory.id %>"></td>
+        <td><%= accessory.product_id %></td>
+        <td><%= accessory.name %></td>
+        <td><%= accessory.description %></td>
+        <td><%= accessory.unit_price %></td>
+      </tr>
+      <% end %>
+    <% end %>
+    
+    
+    
+  </table>
+  <input type="submit">
+</form>
+</html>

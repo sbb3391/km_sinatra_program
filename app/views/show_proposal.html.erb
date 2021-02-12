@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <h1>This proposal belongs to <%= @proposal.account.name %></h1>
+  <h1>These models are on the proposal:</h1>
+  <ul>
+  <% @proposal.units.each do |unit| %>
+    <li><%= unit.model.name %></li>
+  <% end %>
+  </ul>
+
+</html>
