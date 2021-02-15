@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>  
+  <style>
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+  th {
+    padding: 15px;
+  }
+
+  table {
+   border-spacing: 5px;
+   width: 50%;
+  }
+
+  tr th:nth-child(1) {
+  width: 5%;
+}
+
+  tr th:nth-child(2) {
+  width: 10%;
+}
+
+  tr th:nth-child(3) {
+  width: 30%;
+}
+
+  tr th:nth-child(4) {
+  width: 40%;
+}
+
+thead th:nth-child(5) {
+  width: 15%;
+}
+
+  .qty {
+    width: 40px;
+    padding: 8px;
+    border: 0;
+  }
+
+  td {
+    font-size: 14px;
+    padding: 8px;
+  }
+  </style>
+</head>
+<form action="/proposals/<%= @proposal.id %>/line_items" method="POST">
+
+<!-- <h1>Please select the cost per impression for each main unit you selected:</h1>
+
+  <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+
+    <% if Product.find(line_item.product_id).name == "ACCURIOPRESS 6120" %>
+      <p> <%= Product.find(line_item.product_id).name %> mono cpi: <input type="text" name="<%= Product.find(line_item.product_id).id %>_mono_cpi"></p>
+    <% else %>
+      <p> <%= Product.find(line_item.product_id).name %> mono cpi: <input type="text" name="<%= Product.find(line_item.product_id).id %>_mono_cpi"></p>
+      <p> <%= Product.find(line_item.product_id).name %> color cpi: <input type="text" name="<%= Product.find(line_item.product_id).id %>_color_cpi"></p>
+    <% end %>
+
+  <% end %>
+</h1> -->
+
+<h1>Please choose a quantity for the models you have chosen, and a quantity for the accessories you need for each model:</h1>
+
+  <table>
+    <tr>
+      <th>Quantity</th>
+      <th>Product id</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Unit Price</th>
+    </tr>
+   
+      <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+
+        <% @categories.each do |cat| %>
+      
+          <tr>
+            <td><%= cat %></td>
+          </tr>
+          <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |product| %>
+            <tr>
+              <td><input class="qty" type="number" name=<%= product.id %>></td>
+              <td><%= product.km_product_id %></td>
+              <td><%= product.name %></td>
+              <td><%= product.description %></td>
+              <td><%= product.price %></td>
+            </tr>
+          <% end %> 
+        <% end %>
+      <% end %> 
+
+  </table>
+  <input type="submit">
+</form>
+</html>

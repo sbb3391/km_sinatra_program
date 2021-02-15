@@ -10,15 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_12_043243) do
-
-  create_table "accessories", force: :cascade do |t|
-    t.string "product_id"
-    t.string "name"
-    t.string "accessory_type"
-    t.string "description"
-    t.string "unit_price"
-  end
+ActiveRecord::Schema.define(version: 2021_02_14_181010) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id"
@@ -30,29 +22,30 @@ ActiveRecord::Schema.define(version: 2021_02_12_043243) do
     t.index ["user_id"], name: "index_accounts_on_user_id"
   end
 
-  create_table "joins", force: :cascade do |t|
-    t.integer "model_id"
-    t.integer "accessory_id"
-    t.index ["accessory_id"], name: "index_joins_on_accessory_id"
-    t.index ["model_id"], name: "index_joins_on_model_id"
+  create_table "line_items", force: :cascade do |t|
+    t.integer "proposal_id"
+    t.integer "product_id"
+    t.integer "quantity"
+    t.decimal "extended_price"
+    t.decimal "color_cpi"
+    t.decimal "mono_cpi"
+    t.index ["product_id"], name: "index_line_items_on_product_id"
+    t.index ["proposal_id"], name: "index_line_items_on_proposal_id"
   end
 
-  create_table "models", force: :cascade do |t|
+  create_table "products", force: :cascade do |t|
     t.string "name"
-    t.float "price"
+    t.string "km_product_id"
+    t.string "description"
+    t.decimal "price", default: "0.0"
+    t.string "km_equipment"
+    t.string "category"
   end
 
   create_table "proposals", force: :cascade do |t|
     t.date "proposal_date"
     t.integer "account_id"
     t.index ["account_id"], name: "index_proposals_on_account_id"
-  end
-
-  create_table "units", force: :cascade do |t|
-    t.integer "model_id"
-    t.integer "proposal_id"
-    t.index ["model_id"], name: "index_units_on_model_id"
-    t.index ["proposal_id"], name: "index_units_on_proposal_id"
   end
 
 end

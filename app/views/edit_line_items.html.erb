@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>  
+  <style>
+
+    .main {
+    border-collapse: collapse;
+    border-spacing: 5px;
+    width: 50%;
+    border: black 1px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    }
+
+    .main thead {
+      text-align: left;
+    }
+
+    .main th {
+      padding: 15px 15px;
+    }
+  
+    tr th:nth-child(1) {
+    width: 5%;
+  }
+  
+    tr th:nth-child(2) {
+    width: 10%;
+  }
+  
+    tr th:nth-child(3) {
+    width: 30%;
+  }
+  
+    tr th:nth-child(4) {
+    width: 40%;
+  }
+  
+  thead th:nth-child(5) {
+    width: 15%;
+  }
+  
+  .cat {
+    height: 12px;
+    background-color: rgb(181, 201, 247);
+    text-align: center;
+    color:rgb(0, 0, 0);
+    font-size: .9em;
+  }
+
+  .head {
+    background-color:rgb(16, 16, 172);
+    color:cornsilk
+  }
+    
+  .qty {
+      width: 40px;
+      padding: 8px;
+      border: 0;
+    }
+
+    td {
+      font-size: .75em;
+      padding: 8px;
+    }
+    </style>
+</head>
+
+<h1>Feel free to change the quantity for any line items, or add new ones:</h1>
+
+<form action="/proposals/<%= @proposal.id %>/line_items/edit" method="POST">
+  <table class="main">
+    <thead>
+      <tr class="head">
+        <th>Quantity</th>
+        <th>Product id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Unit Price</th>
+      </tr>
+    
+        <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+
+          <% @categories.each do |cat| %>
+        
+            <tr>
+              <td class="cat" colspan="5"><%= cat %></td>
+            </tr>
+            <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |a| %>
+            <% q = @proposal.line_items.find_by(product_id: a.id) %>
+              <tr>
+                  <td><input class="qty" type="number" value="1" name="<%= a.id %>"></td>
+                  <td><%= a.km_product_id %></td>
+                  <td><%= a.name %></td>
+                  <td><%= a.description %></td>
+                  <td><%= a.price %></td>
+              </tr>
+            <% end %> 
+          <% end %>s
+        <% end %> 
+    </thead>
+  </table>
+  <input type="submit">
+</form>
+</html>

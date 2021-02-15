@@ -93,10 +93,10 @@
     </select>
   </div>
   <h3>Models</h3>
-  <% @models.each do |model| %>
+  <% @engines.each do |engine| %>
   <div class="section">
-    <label class="container"><%= model.name %>
-      <input type="checkbox" name="<%= model.id %>">
+    <label class="container"><%= engine.name %>
+      <input type="checkbox" name="<%= engine.id %>">
       <span class="checkmark"></span>
     </label>
     </div>

@@ -1,11 +1,208 @@
 <!DOCTYPE html>
 <html>
-  <h1>This proposal belongs to <%= @proposal.account.name %></h1>
-  <h1>These models are on the proposal:</h1>
-  <ul>
-  <% @proposal.units.each do |unit| %>
-    <li><%= unit.model.name %></li>
-  <% end %>
-  </ul>
+<head>
+  <style>
 
+    table {
+    border-collapse: collapse;
+    border-spacing: 5px;
+    width: 50%;
+    border: black 1px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    }
+
+  tr td:nth-child(1) {
+    width: 10%;
+  }
+  
+  tr td:nth-child(2) {
+    width: 10%;
+  }
+  
+  tr td:nth-child(3) {
+    width: 25%;
+  }
+  
+  tr td:nth-child(4) {
+    width: 25%;
+  }
+  
+  tr td:nth-child(5) {
+    width: 12%;
+  }
+
+  tr td:nth-child(6) {
+    width: 12%;
+  }
+
+  tr th:nth-child(1) {
+    width: 10%;
+  }
+  
+  tr th:nth-child(2) {
+    width: 10%;
+  }
+  
+  tr th:nth-child(3) {
+    width: 25%;
+  }
+  
+  tr th:nth-child(4) {
+    width: 25%;
+  }
+  
+  tr th:nth-child(5) {
+    width: 12%;
+  }
+
+  tr th:nth-child(6) {
+    width: 12%;
+  }
+
+  .collapsible {
+    background-color: rgb(181, 201, 247);
+    color:rgb(0, 0, 0);
+    cursor: pointer;
+    text-align: center;
+    font-size: .9em;
+    width: 50%;
+    height: 40px;
+    outline: none;
+    border: none;
+    position: relative;
+    font-weight: bold;
+  }
+
+  .collapsible::after {
+    content: "\25BE";
+    font-size: 2rem;
+    position:absolute;
+    right:1rem;
+    bottom:10%;
+    transition: transform 0.2s ease-in-out;
+
+  }
+
+  .collapsible.active::after {
+    /* content: "\2212"; */
+    transform: rotate(180deg);
+  }
+
+  .accordian-item-body-content {
+    border-top: 1px solid black;
+    border-image: linear-gradient(to right, transparent, black, transparent) 1;
+  }
+
+  .active, .collapsible:hover {
+  background-color: #555;
+  }
+
+.content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+}
+  
+  .cat {
+    height: 12px;
+    background-color: rgb(181, 201, 247);
+    text-align: left;
+    color:rgb(0, 0, 0);
+    font-size: .9em;
+  }
+
+  .head {
+    background-color:rgb(16, 16, 172);
+    color:cornsilk;
+    text-align: left;
+    height: 40px;
+  }
+    
+  .qty {
+      width: 40px;
+      padding: 8px;
+      border: 0;
+    }
+
+    td {
+      font-size: .75em;
+    }
+
+    </style>
+</head>
+<body>
+  <h1>This proposal belongs to <%= @proposal.account.name %></h1>
+  <h1>Here is what is currently on the proposal:</h1>
+  <h1><a href="/proposals/<%= @proposal.id %>/line_items/edit">click here to edit this proposal</a></h1>
+
+    <table class="main">
+      <thead>
+        <tr class="head">
+          <th>Quantity</th>
+          <th>Product id</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Unit Price</th>
+          <th>Extended Price</th>
+        </tr>
+      </thead>
+    </table>
+        <!-- Loop through all proposal line items that are engines-->
+        <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+        
+
+          <button class="collapsible"><%=Product.find(line_item.product_id).name %></button>
+            <!-- For this engine instance, loop through all the categories-->
+            <div class="content">
+            <table>
+            <% @categories.each do |cat| %>
+
+              <% if cat == "Engine" %>
+                <% true %>
+              <% else %>
+                <tr>
+                  <td class="cat" colspan="6"><%= cat %></td>
+                </tr>
+              <% end %>
+
+              <% @proposal.line_items.where(product_id: Product.all.where(category: cat, km_equipment: Product.find(line_item.product_id).km_equipment)).each do |line_item| %>
+                <tr>
+                  <td><%= line_item.quantity %></td>
+                  <td><%= Product.find(line_item.product_id).km_product_id %></td>
+                  <td><%= Product.find(line_item.product_id).name %></td>
+                  <td><%= Product.find(line_item.product_id).description %></td>
+                  <td><%= Product.find(line_item.product_id).price %></td>
+                  <td><%= line_item.extended_price %></td>
+                </tr>
+              <% end %> 
+            <% end %>
+            </table>
+            </div>
+          <% end %>
+    
+    <h1>The total price for this proposal is: $<%= @total_price %></h1>
+
+  <script>
+    const collapsibles = document.querySelectorAll(".collapsible");
+
+    collapsibles.forEach(collapsible => {
+      collapsible.addEventListener("click", event => {
+        collapsible.classList.toggle("active");
+        const content = collapsible.nextElementSibling;
+        if(collapsible.classList.contains("active")) {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+        else {
+          content.style.maxHeight = 0;
+        }
+      });
+    });
+
+  </script>
+
+</body>
 </html>
+
+
