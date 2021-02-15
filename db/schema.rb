@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_14_181010) do
+ActiveRecord::Schema.define(version: 2021_02_15_212116) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id"
@@ -46,6 +46,11 @@ ActiveRecord::Schema.define(version: 2021_02_14_181010) do
     t.date "proposal_date"
     t.integer "account_id"
     t.index ["account_id"], name: "index_proposals_on_account_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "password"
   end
 
 end
