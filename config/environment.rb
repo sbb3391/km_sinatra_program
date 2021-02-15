@@ -16,6 +16,6 @@ ActiveRecord::Base.establish_connection(
   :database => "db/test.db"
 )
 
-ActiveRecord::Base.logger = Logger.new(STDOUT)
+# ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 require_all 'app'
