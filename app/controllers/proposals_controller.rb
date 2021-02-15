@@ -17,6 +17,7 @@ class ProposalsController < Sinatra::Base
   end
 
   get '/proposals/:id' do 
+    binding.pry
     @proposal = Proposal.find(params[:id])
     @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
     
@@ -33,6 +34,7 @@ class ProposalsController < Sinatra::Base
 
 
   get '/proposals/:id/line_items/new' do
+
     @proposal = Proposal.find(params[:id])
     @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
 
@@ -55,9 +57,10 @@ class ProposalsController < Sinatra::Base
 
   post "/proposals/:id/line_items" do
 
+    
     #existing line items in the current proposal
     li = Proposal.find(params[:id]).line_items
-
+    
     params[:product_id].each do |k,v|
       if v == ""
         true
