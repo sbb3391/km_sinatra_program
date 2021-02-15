@@ -86,9 +86,9 @@
 <Form action="/proposals" method="POST">
   <h3>Account: </h3>
   <div class="section">
-    <select name="account_id">
+    <select name="proposal[account_id]">
       <% @accounts.each do |account| %>
-      <option value="<%= account.id %>"><%= account.name %></option>
+      <option id=<%= account.id.to_i %> value="<%= account.id %>"><%= account.name %></option>
       <% end %>
     </select>
   </div>
@@ -96,7 +96,7 @@
   <% @engines.each do |engine| %>
   <div class="section">
     <label class="container"><%= engine.name %>
-      <input type="checkbox" name="<%= engine.id %>">
+      <input type="checkbox" name="proposal[product_ids][]" id="<%= engine.id %>" value="<%= engine.id %>">
       <span class="checkmark"></span>
     </label>
     </div>

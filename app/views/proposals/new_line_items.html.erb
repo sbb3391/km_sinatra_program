@@ -83,7 +83,7 @@ thead th:nth-child(5) {
           </tr>
           <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |product| %>
             <tr>
-              <td><input class="qty" type="number" name=<%= product.id %>></td>
+              <td><input class="qty" type="number" name="product_id[<%= product.id %>]"></td>
               <td><%= product.km_product_id %></td>
               <td><%= product.name %></td>
               <td><%= product.description %></td>
