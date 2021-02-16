@@ -10,5 +10,9 @@ class AccountsController < Sinatra::Base
     set :session_secret, "secret"
   end
   
-  
+  get '/accounts' do
+    @user = User.find(session[:id])
+
+    erb :'/accounts/index.html'
+  end
 end

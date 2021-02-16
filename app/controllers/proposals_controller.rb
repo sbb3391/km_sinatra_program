@@ -10,6 +10,12 @@ class ProposalsController < Sinatra::Base
       set :session_secret, "secret"
     end
 
+  get '/proposals' do 
+    @user = User.find(session[:id])
+
+    erb :'proposals/index.html'
+  end
+
   get '/proposals/new' do
 
     @engines = Product.all.where(category: "Engine")
