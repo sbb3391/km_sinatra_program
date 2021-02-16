@@ -2,13 +2,16 @@ require 'pry'
 require_relative '../../config/environment'
 
 class ProposalsController < Sinatra::Base
-  
-  configure do
-    set :public_folder, 'public'
-    set :views, 'app/views'
-  end
+
+    configure do
+      set :public_folder, 'public'
+      set :views, 'app/views'
+      enable :sessions unless test?
+      set :session_secret, "secret"
+    end
 
   get '/proposals/new' do
+
     @engines = Product.all.where(category: "Engine")
     @accounts = Account.all
 
@@ -17,7 +20,7 @@ class ProposalsController < Sinatra::Base
   end
 
   get '/proposals/:id' do 
-    binding.pry
+
     @proposal = Proposal.find(params[:id])
     @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
     
@@ -34,7 +37,6 @@ class ProposalsController < Sinatra::Base
 
 
   get '/proposals/:id/line_items/new' do
-
     @proposal = Proposal.find(params[:id])
     @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
 
@@ -50,13 +52,14 @@ class ProposalsController < Sinatra::Base
   end
 
   post '/proposals' do
-    @proposal = Proposal.create(params[:proposal])
+    account = Account.find(params[:proposal][:account_id])
+    @proposal = account.proposals.create(params[:proposal])
 
     redirect to "proposals/#{@proposal.id}/line_items/new"
   end
 
   post "/proposals/:id/line_items" do
-
+    binding.pry
     
     #existing line items in the current proposal
     li = Proposal.find(params[:id]).line_items
