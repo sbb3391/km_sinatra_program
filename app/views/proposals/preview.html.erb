@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <style>
+    .page {
+      background-color: white;
+      width: 50%;
+      height: 1100px;
+      border: solid 5px black;
+      align-content: center;
+      margin: auto;
+      margin-bottom: 25px;
+    }
+
+    .header {
+      background-color: blue;
+      width: 90%;
+      height: 6%;
+      margin: auto;
+      margin-top: 45px;
+      margin-bottom: 15px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+   
+    }
+
+    .header_text {
+      color: white;
+      font-size: 2.2em;
+      font-weight: bold;
+    }
+    
+    .photo {
+      margin: auto;
+      width: 80%;
+      margin-top: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .accessories_header {
+      background-color: blue;
+      width: 90%;
+      height:3%;
+      margin: auto;
+      margin-top: 45px;
+      margin-bottom: 15px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .options_text {
+      color: white;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    .options {
+      background-color: white;
+      width: 90%;
+      height: 26%;
+      border: black 1px solid;
+      margin: auto;
+      margin-top: 15px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+  .pricing_complete {
+    width: 90%;
+    height: 29%;
+    margin: auto;
+    position: relative;
+  }
+
+  .pricing {
+    width: 49%;
+    height: 100%;
+    display: inline-block;
+  }
+
+  .one {
+    margin-right: 12px;
+  }
+
+  .pricing_header {
+    width: 100%;
+    background-color: blue;
+    height: 11%;
+    margin-top: 18px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+
+  .pricing_content {
+    width: 100%;
+    background-color: white;
+    height: 80%;
+    margin-top: 18px;
+    border: black 1px solid;
+
+  }
+
+  .pricing_content p {
+    padding: 20px;
+  }
+
+  </style>
+  </head>
+  <body>
+    <h1>Here is your proposal to preview:</h1>
+    
+    <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+      <% model = Product.find(line_item.product_id) %>
+      <% product_price = 0 %>
+      <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: model.km_equipment)).each do |li| %>
+        <% product_price += Product.find(li.product_id).price %>
+      <% end %>
+
+    <div class="page">
+        <div class="header">
+          <section class="header_text">
+            <%= Product.find(line_item.product_id).name %>
+          </section>
+        </div>
+        <div class="photo">
+          <img src="https://www.mjflood.ie/media/2014/11/Konica-Minolta-AccurioPress-C3080_1-1-1024x330.jpg" width="600" height="180">
+        </div>
+        <div class="accessories_header">
+          <section class="options_text">
+            Equipment Options
+          </section>
+        </div>
+        <div class="options">
+        </div>
+        <div class="pricing_complete">
+          <div class="pricing one">
+            <div class="pricing_header">
+              <section class="options_text">
+                Service Costs
+              </section>
+            </div>
+            <div class="pricing_content">
+            </div>
+          </div>
+          <div class="pricing two">
+            <div class="pricing_header">
+              <section class="options_text">
+                Equipment Costs
+              </section>
+            </div>
+            <div class="pricing_content">
+              <div>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+    <% end %>
+  </body>
+</html>

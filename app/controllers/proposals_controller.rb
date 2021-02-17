@@ -82,6 +82,13 @@ class ProposalsController < Sinatra::Base
     end
 
     redirect to "/proposals/#{params[:id]}"
-
   end
+
+  get '/proposals/:id/preview' do 
+    @user = User.find(session[:id])
+    @proposal = Proposal.find(params[:id])
+
+    erb :"/proposals/preview.html"
+  end
+
 end
