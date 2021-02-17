@@ -22,23 +22,26 @@ class ApplicationController < Sinatra::Base
 
   get '/' do
 
-    erb :'index.html'
+    erb :'login.html'
   end
 
   get '/home' do 
+
     @user = User.find(session[:id])
 
     erb :'/home.html'
   end
 
   post '/login' do 
-    @user = User.find_by(username: params[:username], password: params[:password])
-
-    if @user
-      session[:id] = @user.id
+    @user = User.find_by(username: params[:username])
+    binding.pry
+    if @user == nil
+      redirect to '/'
+    elsif !!@user.authenticate(params[:password])
+      session[:id] = @user.authenticate(params[:password]).id
       redirect to '/home'
     else
-      erb :'error.html'
+      redirect to '/'
     end
   end
 
@@ -51,19 +54,21 @@ class ApplicationController < Sinatra::Base
     if params[:username] == "" || params[:password] == ""
       redirect to '/signup'
     else
-      @user = User.create(username: params[:username], password: params[:password])
+      @user = User.create(params)
       session[:id] = @user.id
       redirect to '/home'
     end
   end
 
   get '/logout' do
-    if session[:user_id] != nil
-      session.destroy
-      redirect to '/login'
+
+    if session[:id] != nil
+      session.delete(:id)
+      redirect to '/'
     else
       redirect to '/'
     end
+
   end
 end
 

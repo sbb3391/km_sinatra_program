@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_16_161310) do
+ActiveRecord::Schema.define(version: 2021_02_17_001425) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id"
@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(version: 2021_02_16_161310) do
 
   create_table "users", force: :cascade do |t|
     t.string "username"
-    t.string "password"
+    t.string "password_digest"
   end
 
 end

@@ -3,12 +3,12 @@ require_relative '../../config/environment'
 
 class Helpers
 
-  def self.current_user(sessions)
+  def self.current_user(session)
     User.find(sessions[:id])
   end
 
-  def self.is_logged_in?(sessions)
-    !!sessions[:id]
+  def self.is_logged_in?(session)
+    !!session[:id]
   end
 
 
