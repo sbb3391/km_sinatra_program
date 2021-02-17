@@ -166,13 +166,13 @@ table {
                 </tr>
               <% end %>
     
-              <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |prod| %>
+              <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
                 <tr>
-                  <td><input class="qty" type="number" value=1 name="<%= prod.id %>"></td>
-                  <td><%= prod.km_product_id %></td>
-                  <td><%= prod.name %></td>
-                  <td><%= prod.description %></td>
-                  <td><%= prod.price %></td>
+                  <td><input class="qty" type="number" value="<%= @proposal.line_items.find_by(product_id: drop.id).quantity if !!@proposal.line_items.find_by(product_id: drop.id) %>" name="<%= drop.id %>"></td>
+                  <td><%= drop.km_product_id %></td>
+                  <td><%= drop.name %></td>
+                  <td><%= drop.description %></td>
+                  <td><%= drop.price %></td>
                 </tr>
               <% end %> 
             <% end %>

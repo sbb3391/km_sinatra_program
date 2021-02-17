@@ -10,6 +10,7 @@
       align-content: center;
       margin: auto;
       margin-bottom: 25px;
+      position: relative;
     }
 
     .header {
@@ -52,68 +53,115 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
-    .options_text {
+    .accessories_header_text {
       color: white;
-      font-size: 1.2em;
-      font-weight: bold;
     }
+
+    /* position: absolute;
+    bottom: 40px;
+    left: 46px;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    overflow: hidden;
+  } */
 
     .options {
       background-color: white;
       width: 90%;
       height: 26%;
-      border: black 1px solid;
-      margin: auto;
-      margin-top: 15px;
-      position: relative;
-      display: flex;
+      left: 44px;
+      position: absolute;
+      margin-bottom;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
     }
 
-  .pricing_complete {
+    .option {
+    width: 49%;
+    background-color: rgb(231, 230, 230);
+    height: 35px;
+    max-height: 35px;
+    margin-left: 6px;
+    margin-bottom: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    }
+
+    .option_text {
+      position: relative;
+      font-size: .9em;
+      font-color: white;
+    }
+
+  /* .pricing_complete {
     width: 90%;
     height: 29%;
     margin: auto;
     position: relative;
+  } */
+
+  .pricing_complete {
+    width: 90%;
+    height: 335px;
+    max-height: 335px;
+    position: absolute;
+    bottom: 40px;
+    left: 46px;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    overflow: hidden;
   }
 
-  .pricing {
-    width: 49%;
+ .pricing {
+    width: 48%;
     height: 100%;
+    max-height: 100%;
     display: inline-block;
+    max-height: 325px;
+    position: relative;
   }
 
   .one {
-    margin-right: 12px;
+    margin-right: 23px;
+    margin-left: 3px;
   }
+
 
   .pricing_header {
     width: 100%;
     background-color: blue;
-    height: 11%;
-    margin-top: 18px;
-    position: relative;
+    height: 30px;
+    max-height: 30px;
+    position: absolute;
+    top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
     
   }
 
   .pricing_content {
     width: 100%;
     background-color: white;
-    height: 80%;
+    top: 45px;
+    height: 260px;
+    max-height: 260px;
     margin-top: 18px;
     border: black 1px solid;
+    position: absolute;
+    overflow: hidden;
 
   }
 
   .pricing_content p {
-    padding: 20px;
-  }
+  } 
 
   </style>
   </head>
@@ -122,9 +170,10 @@
     
     <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
       <% model = Product.find(line_item.product_id) %>
+      
       <% product_price = 0 %>
       <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: model.km_equipment)).each do |li| %>
-        <% product_price += Product.find(li.product_id).price %>
+        <% product_price += li.extended_price %>
       <% end %>
 
     <div class="page">
@@ -137,11 +186,14 @@
           <img src="https://www.mjflood.ie/media/2014/11/Konica-Minolta-AccurioPress-C3080_1-1-1024x330.jpg" width="600" height="180">
         </div>
         <div class="accessories_header">
-          <section class="options_text">
-            Equipment Options
-          </section>
+            <section class="accessories_header_text">Equipment Options</section> 
         </div>
         <div class="options">
+            <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment)).each do |accessory| %>
+              <div class="option">
+                <p class="option_text"><%= Product.find(accessory.product_id).name %></p>
+              </div>
+            <% end %> 
         </div>
         <div class="pricing_complete">
           <div class="pricing one">
@@ -151,6 +203,7 @@
               </section>
             </div>
             <div class="pricing_content">
+           
             </div>
           </div>
           <div class="pricing two">
@@ -160,8 +213,7 @@
               </section>
             </div>
             <div class="pricing_content">
-              <div>
-              </div>
+              <p>This Product costs : $<%= product_price %></p>
             </div>
           </div>
         </div> 

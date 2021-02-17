@@ -59,9 +59,13 @@ class ProposalsController < Sinatra::Base
 
   post '/proposals' do
     account = Account.find(params[:proposal][:account_id])
-    @proposal = account.proposals.create(params[:proposal])
+    @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
+    
+    params[:proposal][:product_ids].each do |product|
+      @proposal.line_items.create(product_id: product.to_i, quantity: 1)
+    end
 
-    redirect to "proposals/#{@proposal.id}/line_items/new"
+    redirect to "proposals/#{@proposal.id}/edit"
   end
 
   post "/proposals/:id/line_items" do
