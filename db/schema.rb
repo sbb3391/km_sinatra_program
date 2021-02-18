@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_001425) do
+ActiveRecord::Schema.define(version: 2021_02_18_115040) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id"
@@ -33,6 +33,11 @@ ActiveRecord::Schema.define(version: 2021_02_17_001425) do
     t.index ["proposal_id"], name: "index_line_items_on_proposal_id"
   end
 
+  create_table "pricing_options", force: :cascade do |t|
+    t.string "name"
+    t.float "lease_rate_factor"
+  end
+
   create_table "products", force: :cascade do |t|
     t.string "name"
     t.string "km_product_id"
@@ -40,6 +45,13 @@ ActiveRecord::Schema.define(version: 2021_02_17_001425) do
     t.decimal "price", default: "0.0"
     t.string "km_equipment"
     t.string "category"
+  end
+
+  create_table "proposal_pricing_options", force: :cascade do |t|
+    t.integer "pricing_option_id"
+    t.integer "proposal_id"
+    t.index ["pricing_option_id"], name: "index_proposal_pricing_options_on_pricing_option_id"
+    t.index ["proposal_id"], name: "index_proposal_pricing_options_on_proposal_id"
   end
 
   create_table "proposals", force: :cascade do |t|

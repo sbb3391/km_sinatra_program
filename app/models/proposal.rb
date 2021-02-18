@@ -3,5 +3,7 @@ class Proposal < ActiveRecord::Base
   belongs_to :account
   belongs_to :user
   has_many :products, through: :line_items
+  has_many :proposal_pricing_options
+  has_many :pricing_options, through: :proposal_pricing_options
 
 end

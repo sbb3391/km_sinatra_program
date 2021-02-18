@@ -92,6 +92,16 @@
       <% end %>
     </select>
   </div>
+  <h3>Pricing Options to be included:</h3>
+  <% PricingOption.all.each do |option| %>
+  <div class="section">
+    <label class="container"><%= option.name %>
+      <input type="checkbox" name="create_proposal_pricing_options[pricing_option_ids][]" id="<%= option.id %>" value="<%= option.id %>">
+      <span class="checkmark"></span>
+    </label>
+    </div>
+  <% end %>
+
   <h3>Models</h3>
   <% @engines.each do |engine| %>
   <div class="section">

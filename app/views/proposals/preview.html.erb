@@ -16,7 +16,7 @@
     .header {
       background-color: blue;
       width: 90%;
-      height: 6%;
+      height: 7.5%;
       margin: auto;
       margin-top: 45px;
       margin-bottom: 15px;
@@ -29,7 +29,7 @@
 
     .header_text {
       color: white;
-      font-size: 2.2em;
+      font-size: 2.5em;
       font-weight: bold;
     }
     
@@ -45,7 +45,7 @@
     .accessories_header {
       background-color: blue;
       width: 90%;
-      height:3%;
+      height:4%;
       margin: auto;
       margin-top: 45px;
       margin-bottom: 15px;
@@ -54,10 +54,13 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      border: black 1px solid;
     }
 
     .accessories_header_text {
       color: white;
+      font-weight: bold;
+      font-size: 1.5em;
     }
 
     /* position: absolute;
@@ -81,9 +84,24 @@
       overflow: hidden;
     }
 
+    .option:nth-child(4n+1) {
+      background-color: rgb(172, 213, 255);
+      border-top: 2px solid grey;
+      border-bottom: 2px solid grey;
+    }
+
+    .option:nth-child(4n+2) {
+      background-color: rgb(172, 213, 255);
+      border-top: 2px solid grey;
+      border-bottom: 2px solid grey;
+    }
+
+    .option:nth-last-child(-n+2) {
+      border-bottom: 2px solid grey;
+    }
+
     .option {
     width: 49%;
-    background-color: rgb(231, 230, 230);
     height: 35px;
     max-height: 35px;
     margin-left: 6px;
@@ -94,8 +112,7 @@
 
     .option_text {
       position: relative;
-      font-size: .9em;
-      font-color: white;
+      font-size: .9em;      f
     }
 
   /* .pricing_complete {
@@ -136,22 +153,25 @@
   .pricing_header {
     width: 100%;
     background-color: blue;
-    height: 30px;
-    max-height: 30px;
+    height: 45px;
+    max-height: 45px;
     position: absolute;
     top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+    font-weight: bold;
+    border: black 1px solid;
+    font-size: 1.5em;
     
   }
 
   .pricing_content {
     width: 100%;
     background-color: white;
-    top: 45px;
-    height: 260px;
+    top: 60px;
+    height: 210px;
     max-height: 260px;
     margin-top: 18px;
     border: black 1px solid;
@@ -191,7 +211,7 @@
         <div class="options">
             <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment)).each do |accessory| %>
               <div class="option">
-                <p class="option_text"><%= Product.find(accessory.product_id).name %></p>
+                <p class="option_text"><%= Product.find(accessory.product_id).name.titleize %></p>
               </div>
             <% end %> 
         </div>

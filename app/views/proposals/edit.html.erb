@@ -167,14 +167,25 @@ table {
               <% end %>
     
               <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
-                <tr>
-                  <td><input class="qty" type="number" value="<%= @proposal.line_items.find_by(product_id: drop.id).quantity if !!@proposal.line_items.find_by(product_id: drop.id) %>" name="<%= drop.id %>"></td>
-                  <td><%= drop.km_product_id %></td>
-                  <td><%= drop.name %></td>
-                  <td><%= drop.description %></td>
-                  <td><%= drop.price %></td>
-                </tr>
-              <% end %> 
+                <% if !!@proposal.line_items.find_by(product_id: drop.id) %>
+                  <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
+                  <tr>
+                    <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>qq"></td>
+                    <td><%= drop.km_product_id %></td>
+                    <td><%= drop.name %></td>
+                    <td><%= drop.description %></td>
+                    <td><%= drop.price %></td>
+                  </tr>
+                <% else %>
+                  <tr>
+                    <td><input class="qty" type="number" name="line_item[<%= drop.id %>]" id="<%= item_qty %>qq"></td>
+                    <td><%= drop.km_product_id %></td>
+                    <td><%= drop.name %></td>
+                    <td><%= drop.description %></td>
+                    <td><%= drop.price %></td>
+                  </tr>
+                <% end %> 
+              <% end %>
             <% end %>
             </table>
             </div>

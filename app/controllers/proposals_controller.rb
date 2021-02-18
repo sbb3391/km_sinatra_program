@@ -60,6 +60,7 @@ class ProposalsController < Sinatra::Base
   post '/proposals' do
     account = Account.find(params[:proposal][:account_id])
     @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
+    binding.pry
     
     params[:proposal][:product_ids].each do |product|
       @proposal.line_items.create(product_id: product.to_i, quantity: 1)
@@ -68,18 +69,23 @@ class ProposalsController < Sinatra::Base
     redirect to "proposals/#{@proposal.id}/edit"
   end
 
-  post "/proposals/:id/line_items" do
-    binding.pry
+  patch "/proposals/:id/edit" do
     
     #existing line items in the current proposal
     li = Proposal.find(params[:id]).line_items
-    
-    params[:product_id].each do |k,v|
+
+    params[:line_item].each do |k,v|
+      item = li.find_by(product_id: Product.find(k.to_i))
       if v == ""
         true
-      #if a line item already exists for the key being evaluated, update the quantity for line item
-      elsif li.where(product_id: Product.find(k.to_i)) != []
+      #if a line item already exists for the key being evaluated and the value is greater than 0, update the quantity for line item
+      elsif v.to_i > 0 && item != nil
         li.where(product_id: Product.find(k.to_i)).update(quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
+      #if a line item already exists for the key being evaluated and the value is less than or equal to zero, destroy that line_item
+      elsif v.to_i <= 0 && item != nil
+        item.destroy
+      elsif v.to_i <= 0
+        true
       else
         li.create(product_id: k.to_i, quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
       end
