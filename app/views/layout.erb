@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>Admin Area</title>
+  </head>
+  <body>
+  <style> 
+    .head_main {
+      width: 100%;
+      height: 10%;
+      background-color: blue;
+    }
+
+    .head_main h1 {
+      color: white;
+    }
+  </style>
+
+  <div class="head_main">
+    <h1> Welcome to your favorite site! </h1>
+
+    <form action="/logout" method="post">
+      <input type="submit" value="Logout">
+    </form>
+  </div>
+
+
+
+    <%= yield %>
+  </body>
+</html>

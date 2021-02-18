@@ -12,6 +12,7 @@ gem 'database_cleaner', '~> 1.6.0'
 gem 'require_all'
 gem 'csv'
 gem 'bcrypt'
+gem 'sinatra-flash'
 
 
 group :development do

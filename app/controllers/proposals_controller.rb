@@ -8,6 +8,7 @@ class ProposalsController < Sinatra::Base
       set :views, 'app/views'
       enable :sessions unless test?
       set :session_secret, "secret"
+      register Sinatra::Flash
     end
 
   get '/proposals' do 
@@ -58,12 +59,20 @@ class ProposalsController < Sinatra::Base
   end
 
   post '/proposals' do
+
     account = Account.find(params[:proposal][:account_id])
-    @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
-    binding.pry
     
+    #create a new proposal for the selected account
+    @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
+    
+    #give the new proposal line items, based on the selections
     params[:proposal][:product_ids].each do |product|
       @proposal.line_items.create(product_id: product.to_i, quantity: 1)
+    end
+
+    #give the new proposal pricing options, based on the selections
+    params[:create_proposal_pricing_options][:pricing_option_ids].each do |option|
+      @proposal.proposal_pricing_options.create(pricing_option_id: option)
     end
 
     redirect to "proposals/#{@proposal.id}/edit"
@@ -73,17 +82,33 @@ class ProposalsController < Sinatra::Base
     
     #existing line items in the current proposal
     li = Proposal.find(params[:id]).line_items
+    ppi = Proposal.find(params[:id]).proposal_pricing_options
+
+    #create or delete proposal pricing options
+    #destroy existing proposal pricing options
+    
+    ppi.destroy_all
+
+    #create new pricing options
+    params[:create_proposal_pricing_options][:pricing_option_ids].each do |option|
+      ppi.create(pricing_option_id: option.to_i)
+    end
+
 
     params[:line_item].each do |k,v|
       item = li.find_by(product_id: Product.find(k.to_i))
-      if v == ""
+      #if the value is empty and that line item did not previosly exist, do nothing
+      if v == "" && item == nil
         true
+      elsif v == "" && item != nil
+        item.destroy
       #if a line item already exists for the key being evaluated and the value is greater than 0, update the quantity for line item
       elsif v.to_i > 0 && item != nil
         li.where(product_id: Product.find(k.to_i)).update(quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
       #if a line item already exists for the key being evaluated and the value is less than or equal to zero, destroy that line_item
       elsif v.to_i <= 0 && item != nil
         item.destroy
+      #if the value passed in is 0 or a negative number, do nothing
       elsif v.to_i <= 0
         true
       else
