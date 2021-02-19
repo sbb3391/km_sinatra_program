@@ -33,7 +33,11 @@ table {
   }
 
   tr td:nth-child(6) {
-    width: 12%;
+    width: 10%;
+  }
+
+  tr td:nth-child(7) {
+    width: 10%;
   }
 
   tr th:nth-child(1) {
@@ -57,8 +61,13 @@ table {
   }
 
   tr th:nth-child(6) {
-    width: 12%;
+    width: 10%;
   }
+
+  tr th:nth-child(6) {
+    width: 10%;
+  }
+
 
   .collapsible {
     background-color: rgb(181, 201, 247);
@@ -121,9 +130,10 @@ table {
   }
     
   .qty {
-      width: 40px;
+      width: 75px;
       padding: 8px;
       border: 0;
+      background-color: #f1f1f1;;
     }
 
     td {
@@ -233,34 +243,32 @@ table {
       <% end %>
     <% end %>
   <h2>Equipment and Accessories:</h2>
-    <table class="main">
-      <thead>
-        <tr class="head">
-          <th>Quantity</th>
-          <th>Product id</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Unit Price</th>
-          <th>Color Click</th>
-          <th>Mono Click</th>
+  <!-- Loop through all proposal line items that are engines-->
+  <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+  
+  <button type="button" class="collapsible"><%=Product.find(line_item.product_id).name %></button>
+  <!-- For this engine instance, loop through all the categories-->
+  <div class="content">
+      <table class="main">
+        <thead>
+          <tr class="head">
+            <th>Quantity</th>
+            <th>Product id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Unit Price</th>
+            <th>Color Click</th>
+            <th>Mono Click</th>
+          </tr>
+        </thead>
+      <% @categories.each do |cat| %>
+      
+      <% if cat == "Engine" %>
+        <% true %>
+      <% else %>
+        <tr>
+          <td class="cat" colspan="7"><%= cat %></td>
         </tr>
-      </thead>
-    </table>
-    <!-- Loop through all proposal line items that are engines-->
-    <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
-
-      <button type="button" class="collapsible"><%=Product.find(line_item.product_id).name %></button>
-      <!-- For this engine instance, loop through all the categories-->
-      <div class="content">
-        <table>
-        <% @categories.each do |cat| %>
-
-          <% if cat == "Engine" %>
-            <% true %>
-          <% else %>
-            <tr>
-              <td class="cat" colspan="7"><%= cat %></td>
-            </tr>
           <% end %>
 
           <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
@@ -276,8 +284,8 @@ table {
               <td><%= drop.name %></td>
               <td><%= drop.description %></td>
               <td><%= drop.price %></td>
-              <td><input type="number" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
-              <td><input type="number" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
+              <td><input class="qty" type="string" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
+              <td><input class="qty" type="string" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
             </tr>
           <% elsif !!@proposal.line_items.find_by(product_id: drop.id) %>
             <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>

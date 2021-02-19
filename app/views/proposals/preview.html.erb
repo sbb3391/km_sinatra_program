@@ -14,7 +14,7 @@
     }
 
     .header {
-      background-color: blue;
+      background-color: rgb(4, 4, 193);
       width: 90%;
       height: 7.5%;
       margin: auto;
@@ -43,7 +43,7 @@
     }
 
     .accessories_header {
-      background-color: blue;
+      background-color: rgb(4, 4, 193);
       width: 90%;
       height:4%;
       margin: auto;
@@ -85,13 +85,13 @@
     }
 
     .option:nth-child(4n+1) {
-      background-color: rgb(172, 213, 255);
+      background-color: rgb(194, 222, 250);
       border-top: 2px solid grey;
       border-bottom: 2px solid grey;
     }
 
     .option:nth-child(4n+2) {
-      background-color: rgb(172, 213, 255);
+      background-color: rgb(194, 222, 250);
       border-top: 2px solid grey;
       border-bottom: 2px solid grey;
     }
@@ -152,7 +152,7 @@
 
   .pricing_header {
     width: 100%;
-    background-color: blue;
+    background-color: rgb(4, 4, 193);
     height: 45px;
     max-height: 45px;
     position: absolute;
@@ -226,6 +226,23 @@
               </section>
             </div>
             <div class="pricing_content">
+              <table>
+                <% if Product.all.find(line_item.product_id).km_equipment == "6120" %>
+                  <tr>
+                    <td>Mono Cost Per Impression:</td>
+                    <td>$<%= line_item.mono_cpi %></td>
+                  </tr>
+                <% else %>
+                  <tr>
+                    <td>Mono Cost Per Impression:</td>
+                    <td>$<%= line_item.mono_cpi %></td>
+                  </tr>
+                  <tr>
+                    <td>Color Cost Per Impression:</td>
+                    <td>$<%= line_item.color_cpi %></td>
+                  </tr>
+                <% end %>
+              </table>
             </div>
           </div>
           <div class="pricing two">
@@ -239,7 +256,7 @@
                 <% @proposal.proposal_pricing_options.each do |option| %>
                   <tr>
                     <td><%= PricingOption.find(option.pricing_option_id).name %></td>
-                    <td>$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * (line_item.extended_price) %></td>
+                    <td>$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * @total_price %></td>
                   </tr>
                 <% end %>
                 </table>

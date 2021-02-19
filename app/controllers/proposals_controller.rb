@@ -95,6 +95,7 @@ class ProposalsController < Sinatra::Base
     end
 
 
+    #create, update, or destroy proposal line items
     params[:line_item].each do |k,v|
       item = li.find_by(product_id: Product.find(k.to_i))
       #if the value is empty and that line item did not previosly exist, do nothing
@@ -114,6 +115,15 @@ class ProposalsController < Sinatra::Base
       else
         li.create(product_id: k.to_i, quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
       end
+
+      #update cost per impression data for engine models
+        params[:clicks].each do |k,v|
+          v[0] = nil if v[0] == ""
+          v[1] = nil if v[1] == ""
+          
+          li.find(k.to_i).update(color_cpi: v[0], mono_cpi: v[1])
+        end
+
     end
 
     redirect to "/proposals/#{params[:id]}"
@@ -122,6 +132,14 @@ class ProposalsController < Sinatra::Base
   get '/proposals/:id/preview' do 
     @user = User.find(session[:id])
     @proposal = Proposal.find(params[:id])
+    
+    total_price = 0
+
+    @proposal.line_items.each do |line_item|
+      total_price += line_item.extended_price
+    end
+
+    @total_price = total_price
 
     erb :"/proposals/preview.html"
   end
