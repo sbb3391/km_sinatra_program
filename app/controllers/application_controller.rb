@@ -18,6 +18,7 @@ class ApplicationController < Sinatra::Base
     set :views, 'app/views'
     enable :sessions unless test?
     set :session_secret, "secret"
+    use Rack::Flash
   end
 
   get '/' do
@@ -33,13 +34,14 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/login' do 
+
     @user = User.find_by(username: params[:username])
-    binding.pry
+  
     if @user == nil
       redirect to '/'
     elsif !!@user.authenticate(params[:password])
       session[:id] = @user.authenticate(params[:password]).id
-      redirect to '/home'
+      redirect to '/proposals'
     else
       redirect to '/'
     end
@@ -51,6 +53,7 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/signup' do
+    binding.pry
     if params[:username] == "" || params[:password] == ""
       redirect to '/signup'
     else
@@ -70,5 +73,41 @@ class ApplicationController < Sinatra::Base
     end
 
   end
+
+  not_found do
+    status 404
+    erb :not_found
+  end
+
+  helpers do
+    def current_user
+        @user = User.find(session[:id]) if session[:id]
+    end
+    
+    def logged_in?
+        !!session[:id]
+    end
+
+
+    def parse_timestamp( time )
+        _time = time.in_time_zone('Eastern Time (US & Canada)')
+        _time.strftime("%B %d, %Y, %l:%M%P")
+    end
 end
+
+
+  private 
+
+  def redirect_to_login
+    flash[:message] = "You must be logged in to complete this request. Please Log in."
+    flash[:alert_type] = "danger"
+    redirect "/"
+  end
+
+  def invalid_proposal_id
+    flash[:message] = "Invalid Proposal ID"
+    redirect '/proposals'
+  end
+end
+
 

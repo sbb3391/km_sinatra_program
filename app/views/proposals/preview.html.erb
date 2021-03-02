@@ -36,10 +36,19 @@
     .photo {
       margin: auto;
       width: 80%;
-      margin-top: 50px;
+      margin-top: 60px;
+      margin-bottom: 60px;
       display: flex;
       justify-content: center;
       align-items: center;
+      max-height: 18%;
+    }
+
+    .photo img {
+      width: auto;
+      height: auto;
+      max-height: 250px;
+      max-width: 90%;
     }
 
     .accessories_header {
@@ -75,13 +84,14 @@
     .options {
       background-color: white;
       width: 90%;
-      height: 26%;
       left: 44px;
-      position: absolute;
-      margin-bottom;
+      position: relative;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
+      height: auto;
+      max-height: 30%;
+      /* overflow: hidden; */
+      /* height: auto; */
     }
 
     .option:nth-child(4n+1) {
@@ -100,19 +110,18 @@
       border-bottom: 2px solid grey;
     }
 
-    .option {
-    width: 49%;
-    height: 35px;
-    max-height: 35px;
-    margin-left: 6px;
+    .options div {
+    width: 48%;
+    margin-left: 10px;
     margin-bottom: 5px;
-    display: inline-block;
-    vertical-align: middle;
-    }
+    display: inline-flex;
+    align-items: center;
+    padding-left: 5px;
+  }
 
-    .option_text {
+    .options div p {
       position: relative;
-      font-size: .9em;      f
+      font-size: 95%;
     }
 
   /* .pricing_complete {
@@ -124,24 +133,25 @@
 
   .pricing_complete {
     width: 90%;
-    height: 335px;
-    max-height: 335px;
-    position: absolute;
-    bottom: 40px;
-    left: 46px;
+    height: 175px;
+    max-height: 225px;
+    position: relative;
+    /* bottom: 40px;
+    left: 46px; */
     justify-content: center;
     align-items: center;
     margin: auto;
-    overflow: hidden;
+    margin-top: 32px;
+    /* overflow: hidden; */
+
   }
 
  .pricing {
     width: 48%;
-    height: 100%;
-    max-height: 100%;
+    height: auto;
     display: inline-block;
     max-height: 325px;
-    position: relative;
+    position: static;
   }
 
   .one {
@@ -155,8 +165,6 @@
     background-color: rgb(4, 4, 193);
     height: 45px;
     max-height: 45px;
-    position: absolute;
-    top: 15px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -170,26 +178,81 @@
   .pricing_content {
     width: 100%;
     background-color: white;
-    top: 60px;
-    max-height: 260px;
-    margin-top: 18px;
+    margin-top: 15px;
     border: black 1px solid;
     position: relative;
+    overflow: hidden;
 
   }
 
+  .pricing_content p {
+    font-size: .8em;
+  }
+
   .pricing_content table {
-    margin: 5px;
     width: 100%;
     height: 75px;
     max-height: 75px;
     font-size: 1.3em;
+    padding: 5px;
+    margin: 5px;
+  }
+
+  .links {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    margin-left: 45px;
+  }
+
+  .link {
+    margin: 20px;
+    font-size: 1.3em;
+  }
+
+  .dash {
+    font-size: 1.8em;
+  }
+
+
+  /* Summmary Page */
+
+  .pricing_text {
+    font-size: 1.2em;
+  }
+
+  .sumtbl {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .summarytbl {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+
+  .mono_clicks {
+    margin-bottom: 15px;
+    border: 1px solid black;
+  }
+
+  .mono_clicks tr td {
+    margin: 25px;
+  }
+
+  .sum_pricing_table {
+    border: none;
   }
 
   </style>
   </head>
   <body>
-    <h1>Here is your proposal to preview:</h1>
+    <div class="links">
+      <a href="/proposals"><h3 class="link">Proposals</h3></a>
+      <h3 class="dash">=></h3>
+      <a href="/proposals/<%= @proposal.id %>"><h3 class="link"><%= @proposal.id %></h3></a>
+    </div>
     
     <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
       <% model = Product.find(line_item.product_id) %>
@@ -199,6 +262,7 @@
         <% product_price += li.extended_price %>
       <% end %>
 
+
     <div class="page">
         <div class="header">
           <section class="header_text">
@@ -206,15 +270,33 @@
           </section>
         </div>
         <div class="photo">
-          <img src="https://www.mjflood.ie/media/2014/11/Konica-Minolta-AccurioPress-C3080_1-1-1024x330.jpg" width="600" height="180">
+           <% arr = [] %> 
+           <!-- Get all line items in the proposal that belong to the model in question (li), and have photo validation   -->
+           <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: Product.all.find(line_item.product_id).km_equipment, photo_validate: true)).map do |li| %>
+            <% arr << Product.find(li.product_id).km_product_id %>
+          <% end %>
+
+          <% x = arr.join.chars.sort.join %>
+          <% file_name = "#{x}.jpg" %> 
+
+           <% if Dir.entries("./public/uploads").any? {|i| i == file_name} %>
+              <img src="/uploads/<%= file_name %>">
+            <% else %>  
+              <form action="/proposals/<%= @proposal.id %>/preview" method="POST" enctype="multipart/form-data">
+                <label for="myfile">Select a file:</label>
+                <input type="file" id="myfile" name="photo[<%= line_item.product_id %>"><br><br>
+                <input type="submit">
+              </form>
+            <% end %>  
         </div>
         <div class="accessories_header">
             <section class="accessories_header_text">Equipment Options</section> 
         </div>
         <div class="options">
             <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment)).each do |accessory| %>
+
               <div class="option">
-                <p class="option_text"><%= Product.find(accessory.product_id).name.titleize %></p>
+                <p class="option_text"><%= Product.find(accessory.product_id).name %></p>
               </div>
             <% end %> 
         </div>
@@ -243,6 +325,19 @@
                   </tr>
                 <% end %>
               </table>
+              <table>
+                <% if line_item.one_click_maximum != nil && line_item.one_click_maximum != "" %> 
+                  <tr>
+                    <td>One click up to <%= line_item.one_click_maximum %></td>
+                  </tr>
+                <% end %>
+                
+                <% if line_item.service_lock_years != nil && line_item.service_lock_years != "" %> 
+                  <tr>
+                    <td>Service rates locked for <%= line_item.service_lock_years %> years</td>
+                  </tr>
+                <% end %>
+              </table>
             </div>
           </div>
           <div class="pricing two">
@@ -254,9 +349,12 @@
             <div class="pricing_content">
               <table>
                 <% @proposal.proposal_pricing_options.each do |option| %>
+
+                <!-- get the unit price for unit: -->
+                
                   <tr>
                     <td><%= PricingOption.find(option.pricing_option_id).name %></td>
-                    <td>$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * @total_price %></td>
+                    <td>$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * product_price %></td>
                   </tr>
                 <% end %>
                 </table>
@@ -265,6 +363,124 @@
         </div> 
       </div>
     <% end %>
+
+    <% if @proposal.show_summary == "on" %>
+
+      <div class="page">
+        <div class="header">
+          <section class="header_text">
+            Investment Summary
+          </section>
+        </div>
+        <div class="sumtbl">
+          <table class="summarytbl">
+            <thead>
+              <tr class="head">
+                <th>Equipment</th>
+                <th>Service</th>
+                <th>Hardware</th>
+              </tr>
+            </thead>
+
+            <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+              <tr>
+                <td><%= Product.find_by_id(line_item.product_id).name %></td>
+                <td>
+                  <table class="mono_clicks">
+                    <tr>
+                      <td>average monthly mono impressions </td>
+                      <td>#####</td>
+                    </tr>
+                    <tr>
+                      <td>cost per impression</td>
+                      <td>######</td>
+                    </tr>
+                    <tr>
+                      <td>monthly mono service cost</td>
+                    </tr>
+                  </table>
+                  <table class="color_clicks">
+                    <tr>
+                      <td>average monthly color impressions </td>
+                      <td>#####</td>
+                    </tr>
+                    <tr>
+                      <td>cost per impression</td>
+                      <td>######</td>
+                    </tr>
+                    <tr>
+                      <td>monthly color service cost</td>
+                    </tr>
+                  </table>
+                  <div class="total">
+                    <h1>Total Service Cost: $#####</h1>
+                  </div>
+                </td>
+                <td>
+                  <table class="sum_pricing_tbl">
+                    <tr>
+                      <% model = Product.find(line_item.product_id) %>
+              
+                      <% product_price = 0 %>
+                      <% @proposal.line_items.where(product_id: Product.all.where(km_equipment: model.km_equipment)).each do |li| %>
+                        <% product_price += li.extended_price %>
+                      <% end %>
+
+                      <% @proposal.proposal_pricing_options.each do |option| %>
+
+                        <!-- get the unit price for unit: -->
+                        
+                        <td class="pricing_text"><%= PricingOption.find(option.pricing_option_id).name %></td>
+                        <td class="pricing_text">$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * product_price %></td>
+                    </tr>
+                    <% end %>
+                  </table>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
+    <h1 id="testing"></h1>
+
+    <script>
+      const options = document.querySelectorAll('.options');
+
+      
+      options.forEach(option => {
+        const num_divs = option.children.length;
+        const divs = option.querySelectorAll('div')
+        
+        console.log(divs);
+        if(num_divs <= 6) {
+          divs.forEach(x => {
+            x.style.height = 55 + "px";
+            x.style.width = 98 + "%";
+            x.children[0].style.fontSize = 1.3 + "em";
+            x.children[0].style.marginLeft = 15 + "px";
+          }); 
+        }
+        else if(num_divs > 6 && num_divs <= 12) {
+          divs.forEach(x => {
+            x.style.height = 45 + "px";
+          }); 
+        }
+        else if(num_divs > 12 && num_divs <= 18) {
+          divs.forEach(x => {
+            x.style.height = 30 + "px";
+          }); 
+        }
+        else if(num_divs > 18) {
+          divs.forEach(x => {
+            x.style.height = 20 + "px";
+          }); 
+        }
+      });
+
+
+    </script>
  
   </body>
 </html>

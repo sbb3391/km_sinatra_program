@@ -21,3 +21,14 @@ group :development do
   gem 'sqlite3', '~> 1.3.6'
   gem "shotgun"
 end
+
+gem "faker", "~> 2.16"
+
+gem "carrierwave", "~> 2.2"
+
+gem "rack-flash3", "~> 1.0"
+
+gem 'wicked_pdf'
+
+gem 'wkhtmltopdf-binary'
+gem "grover", "~> 1.0"

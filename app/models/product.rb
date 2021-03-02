@@ -32,6 +32,52 @@ class Product < ActiveRecord::Base
     hashed.each do |row|
       Product.create(row)
     end
-  end      
+  end  
+  
+  @@photo_parts = [
+    "AAMPWY1",
+    "A03WWY2",
+    "A8K4WY2",
+    "A55CWY3",
+    "A043WY1",
+    "AC8WWY1",
+    "A04HWY2",
+    "A4F3WY6",
+    "A4F4WY1",
+    "AAMPWY1",
+    "A0U4WY3",
+    "A03WWY2",
+    "A8K4WY2",
+    "AA01WY1",
+    "A9CEWY2",
+    "A8FRWY1",
+    "A04HWY2",
+    "A4F3WY6",
+    "AC8UW11",
+    "A4F4WY1",
+    "AC3TWY1",
+    "A65UWY2",
+    "AAPKWY1",
+    "AC4GWY1",
+    "AC4HWY1",
+    "AC4KWY1",
+    "AC4JWY1",
+    "A8FRWY1",
+    "A9CEWY2",
+    "AC8WWY1",
+    "AAUUWY1",
+    "AAPKWY1",
+    "A04HWY2",
+    "A4F4WY1",
+    "AC3TWY1",
+    "A0H2WY3",
+    "A65UWY2",
+    "A9CEWY1"
+  ]
+
+  def self.photo_validation
+    x = @@photo_parts.uniq
+    x
+  end
 
 end

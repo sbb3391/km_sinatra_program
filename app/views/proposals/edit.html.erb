@@ -10,6 +10,7 @@ table {
     border: black 1px;
     border-radius: 5px 5px 0 0;
     overflow: hidden;
+    background-color: rgb(238, 238, 238);
     }
 
   tr td:nth-child(1) {
@@ -64,7 +65,7 @@ table {
     width: 10%;
   }
 
-  tr th:nth-child(6) {
+  tr th:nth-child(7) {
     width: 10%;
   }
 
@@ -104,14 +105,13 @@ table {
   }
 
   .active, .collapsible:hover {
-  background-color: #555;
+  background-color: rgb(101, 128, 193);
   }
 
 .content {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  background-color: #f1f1f1;
 }
   
   .cat {
@@ -142,17 +142,21 @@ table {
 
     /* Checkbox Styling: */
 
+    .pricing_options {
+      width: 55%;
+    }
+
     .container {
   display: block;
   position: relative;
   padding-left: 35px;
   margin-bottom: 12px;
   cursor: pointer;
-  font-size: 22px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  font-size: 1.7em;
 }
 
 /* Hide the browser's default checkbox */
@@ -207,48 +211,155 @@ table {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+  
 }
 
 .section {
-  width: 10%;
+  width: 23%;
   padding: 15px;
+  border: 1px black solid;
+  height: 75px;
+  display: inline-flex;
+  justify-content: left;
+  align-items: center; 
+  margin: 25px;
+  background-color:  rgb(181, 201, 247);
+  border-radius: 6px;
+  border: 2px grey solid;
+
 }
+
+  .pricing_options h2 {
+    display: flex;
+    justify-content: center;
+  }
+
+  .xx {
+    width: 65%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .service_options {
+    width: 55%;
+  }
+
+  .service_options h2 {
+    display: flex;
+    justify-content: center;
+  }
+
+  .service_terms {
+    background-color:rgb(16, 16, 172);
+    color:cornsilk;
+    height: 35px;
+    width: 65%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .service_terms h3 {
+    padding:35px;
+  }
+
+  .input1 {
+    width: 50px;
+  }
+
+  .input2 {
+    width: 80px;
+  }
+
+  .submit_btn {
+    width: 85px;
+    height: 25px;
+    background-color:rgb(16, 16, 172);
+    color:cornsilk;
+    border: 1px black solid;
+    margin-top: 30px;
+    margin-left: 30px;
+    margin-bottom: 50px;
+  }
+
+  .links {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    margin-left: 45px;
+  }
+
+  .link {
+    margin: 20px;
+    font-size: 1.3em;
+  }
+
+  .dash {
+    font-size: 1.8em;
+  }
+
     </style>
 </head>
 <body>
 
-<h1>Feel free to change the quantity for any line items, or add new ones:</h1>
+  <div class="links">
+    <a href="/proposals"><h3 class="link">Proposals</h3></a>
+    <h3 class="dash">=></h3>
+    <a href="/proposals/<%= @proposal.id %>"><h3 class="link"><%= @proposal.id %></h3></a>
+  </div>
 
-<form action="/proposals/<%= @proposal.id %>/edit" method="POST">
-  <input id="hidden" type="hidden" name="_method" value="patch">
+  <form action="/proposals/<%= @proposal.id %>/edit" method="POST">
+    <input id="hidden" type="hidden" name="_method" value="patch">
 
-  <h2>Proposal Pricing Options:</h2>
-
-    <% PricingOption.all.each do |option| %>
-
-      <% if @proposal.proposal_pricing_options.find_by(pricing_option_id: option.id) == nil %>
-        <div class="section">
-          <label class="container"><%= option.name %>
-            <input type="checkbox" name="create_proposal_pricing_options[pricing_option_ids][]" id="<%= option.id %>" value="<%= option.id %>" >
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      <% else %>
-        <div class="section">
-          <label class="container"><%= option.name %>
-            <input type="checkbox" name="create_proposal_pricing_options[pricing_option_ids][]" id="<%= option.id %>" value="<%= option.id %>" checked >
-            <span class="checkmark"></span>
-          </label>
-        </div>
+    
+    <div class="pricing_options">
+      <h2>Proposal Pricing Options:</h2>
+      <% PricingOption.all.each do |option| %>
+      
+        <% if @proposal.proposal_pricing_options.find_by(pricing_option_id: option.id) == nil %>
+          <div class="section">
+            <label class="container"><%= option.name %>
+              <input type="checkbox" name="create_proposal_pricing_options[pricing_option_ids][]" id="<%= option.id %>" value="<%= option.id %>" >
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        <% else %>
+          <div class="section">
+            <label class="container"><%= option.name %>
+              <input type="checkbox" name="create_proposal_pricing_options[pricing_option_ids][]" id="<%= option.id %>" value="<%= option.id %>" checked >
+              <span class="checkmark"></span>
+            </label>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
-  <h2>Equipment and Accessories:</h2>
-  <!-- Loop through all proposal line items that are engines-->
-  <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
-  
-  <button type="button" class="collapsible"><%=Product.find(line_item.product_id).name %></button>
-  <!-- For this engine instance, loop through all the categories-->
-  <div class="content">
+    </div>
+
+    <div>
+      <label>Show summary page on preview:
+        <% if @proposal.show_summary == "on" %>
+          <input type="checkbox" name="show_summary" checked >
+        <% else %>
+          <input type="checkbox" name="show_summary">
+        <% end %>
+      </label> 
+    </div>
+
+    <div class="xx">
+      <h2>Equipment and Accessories:</h2>
+    </div>
+
+      <!-- Loop through all proposal line items that are engines-->
+      <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+      
+    <button type="button" class="collapsible"><%=Product.find(line_item.product_id).name %></button>
+    <!-- For this engine instance, loop through all the categories-->
+    <div class="content">
+      
+      <div class="service_terms">
+        <label>Remove Unit:<input type="checkbox" name="remove_item[<%= Product.find(line_item.product_id).km_equipment %>"></label>
+        <h3>Rates locked for x years: <input class="input1" type="number" value="<%= line_item.service_lock_years %>" name="lock[<%= line_item.id %>]" id="<%= line_item.service_lock_years %>"></h3>
+        <h3>One impression up to: <input class="input2" type="text" value="<%= line_item.one_click_maximum %>" name="one_click[<%= line_item.id %>]" id="<%= line_item.one_click_maximum %>"></h3>
+      </div>
       <table class="main">
         <thead>
           <tr class="head">
@@ -261,57 +372,58 @@ table {
             <th>Mono Click</th>
           </tr>
         </thead>
-      <% @categories.each do |cat| %>
-      
-      <% if cat == "Engine" %>
-        <% true %>
-      <% else %>
-        <tr>
-          <td class="cat" colspan="7"><%= cat %></td>
-        </tr>
-          <% end %>
+        <% @categories.each do |cat| %>
+        
+        <% if cat == "Engine" %>
+          <% true %>
+        <% else %>
+          <tr>
+            <td class="cat" colspan="7"><%= cat %></td>
+          </tr>
+            <% end %>
 
-          <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
-          
-          <% if !!@proposal.line_items.find_by(product_id: drop.id) && cat == "Engine" %>
-            <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
+            <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
+            
+            <% if !!@proposal.line_items.find_by(product_id: drop.id) && cat == "Engine" %>
+              <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
 
-            <% li_color = line_item.color_cpi %>
-            <% li_mono = line_item.mono_cpi %>
-            <tr>
-              <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
-              <td><%= drop.km_product_id %></td>
-              <td><%= drop.name %></td>
-              <td><%= drop.description %></td>
-              <td><%= drop.price %></td>
-              <td><input class="qty" type="string" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
-              <td><input class="qty" type="string" value="<%= li_color if !!li_color %>" name="clicks[<%= line_item.id %>][]" id="<%= li_color %>"></td>
-            </tr>
-          <% elsif !!@proposal.line_items.find_by(product_id: drop.id) %>
-            <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
-            <tr>
-              <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
-              <td><%= drop.km_product_id %></td>
-              <td><%= drop.name %></td>
-              <td><%= drop.description %></td>
-              <td><%= drop.price %></td>
+              <% li_color = line_item.color_cpi %>
+              <% li_mono = line_item.mono_cpi %>
               <tr>
-            </tr>
-          <% else %>
-            <tr>
-              <td><input class="qty" type="number" name="line_item[<%= drop.id %>]" id="<%= item_qty %>qq"></td>
-              <td><%= drop.km_product_id %></td>
-              <td><%= drop.name %></td>
-              <td><%= drop.description %></td>
-              <td><%= drop.price %></td>
-            </tr>
-          <% end %> 
-        <% end %>
-      <% end %>
-    </table>
-  </div>
+                <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
+                <td><%= drop.km_product_id %></td>
+                <td><%= drop.name %></td>
+                <td><%= drop.description %></td>
+                <td><%= drop.price %></td>
+                <td><input class="qty" type="string" value="<%= line_item.color_cpi if !!line_item.color_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.color_cpi %>"></td>
+                <td><input class="qty" type="string" value="<%= line_item.mono_cpi if !!line_item.mono_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.mono_cpi %>"></td>
+              </tr>
+            <% elsif !!@proposal.line_items.find_by(product_id: drop.id) %>
+              <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
+              <tr>
+                <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
+                <td><%= drop.km_product_id %></td>
+                <td><%= drop.name %></td>
+                <td><%= drop.description %></td>
+                <td><%= drop.price %></td>
+                <tr>
+              </tr>
+            <% else %>
+              <tr>
+                <td><input class="qty" type="number" name="line_item[<%= drop.id %>]" id="<%= item_qty %>qq"></td>
+                <td><%= drop.km_product_id %></td>
+                <td><%= drop.name %></td>
+                <td><%= drop.description %></td>
+                <td><%= drop.price %></td>
+              </tr>
+            <% end %> 
           <% end %>
-  <input type="submit">
+        <% end %>
+      </table>
+    </div>
+            <% end %>
+
+      <input class="submit_btn" type="submit">
 
   <script>
     const collapsibles = document.querySelectorAll(".collapsible");
@@ -330,6 +442,8 @@ table {
     });
 
   </script>
+
+  const num_divs = document.querySelectorAll(".")
 
 </body>
 </form>

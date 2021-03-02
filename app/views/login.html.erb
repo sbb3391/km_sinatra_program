@@ -8,6 +8,13 @@
     <h1>Welcome to the Konica Minolta Proposal Generator!</h1>
     <h3>Please Login</h3>
 
+    <% if flash.has?(:message) %>
+
+    <div>
+      <div><%= flash[:message] %></div>
+    </div>
+    <% end %>
+    
     <form action='/login' method="post">
     <p>
       <lable>username</lable>

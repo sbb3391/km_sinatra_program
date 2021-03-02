@@ -6,14 +6,14 @@
     table {
     border-collapse: collapse;
     border-spacing: 5px;
-    width: 50%;
+    width: 65%;
     border: black 1px;
     border-radius: 5px 5px 0 0;
     overflow: hidden;
     background-color: rgb(238, 238, 238);
     }
 
-  tr td:nth-child(1) {
+    tr td:nth-child(1) {
     width: 10%;
   }
   
@@ -34,7 +34,11 @@
   }
 
   tr td:nth-child(6) {
-    width: 12%;
+    width: 10%;
+  }
+
+  tr td:nth-child(7) {
+    width: 10%;
   }
 
   tr th:nth-child(1) {
@@ -58,7 +62,11 @@
   }
 
   tr th:nth-child(6) {
-    width: 12%;
+    width: 10%;
+  }
+
+  tr th:nth-child(7) {
+    width: 10%;
   }
 
   .collapsible {
@@ -67,7 +75,7 @@
     cursor: pointer;
     text-align: center;
     font-size: .9em;
-    width: 50%;
+    width: 65%;
     height: 40px;
     outline: none;
     border: none;
@@ -131,59 +139,83 @@
       font-size: .75em;
     }
 
+    .buttons{
+      width: 65%;
+      background-color:white;
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+
+    }
+
+    a button {
+      height: 30px;
+      width: auto;
+    }
+
+    .buttons_form input {
+      height: 30px;
+      width: auto;
+      background-color: red;
+      color: white;
+    }
     </style>
 </head>
 <body>
-  <h1>This proposal belongs to <%= @proposal.account.name %></h1>
-  <h1>Here is what is currently on the proposal:</h1>
-  <h1><a href="/proposals/<%= @proposal.id %>/edit">click here to edit this proposal</a></h1>
 
-    <table class="main">
-      <thead>
-        <tr class="head">
-          <th>Quantity</th>
-          <th>Product id</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Unit Price</th>
-          <th>Extended Price</th>
-        </tr>
-      </thead>
-    </table>
+    <div class="buttons">
+      <a href="/proposals/<%= @proposal.id %>/edit"><button>Edit</button></a>
+      <a href="/proposals/<%= @proposal.id %>/preview"><button>Preview</button></a>
+      <form class="buttons_form" action="/proposals/<%= @proposal.id %>>/delete" method="POST">
+        <input type="submit" value="Delete">
+      </form>
+    </div>
         <!-- Loop through all proposal line items that are engines-->
-        <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
+  <% @proposal.line_items.where(product_id: Product.all.where(category: "Engine")).each do |line_item| %>
         
 
-          <button class="collapsible"><%=Product.find(line_item.product_id).name %></button>
-            <!-- For this engine instance, loop through all the categories-->
-            <div class="content">
-            <table>
-            <% @categories.each do |cat| %>
-
-              <% if cat == "Engine" %>
-                <% true %>
-              <% elsif @proposal.line_items.where(product_id: Product.all.where(category: cat)) == [] %>
-                <% true %>
-              <% else %>
-                <tr>
-                  <td class="cat" colspan="6"><%= cat %></td>
-                </tr>
-              <% end %>
-
-              <% @proposal.line_items.where(product_id: Product.all.where(category: cat, km_equipment: Product.find(line_item.product_id).km_equipment)).each do |line_item| %>
-                <tr>
-                  <td><%= line_item.quantity %></td>
-                  <td><%= Product.find(line_item.product_id).km_product_id %></td>
-                  <td><%= Product.find(line_item.product_id).name %></td>
-                  <td><%= Product.find(line_item.product_id).description %></td>
-                  <td><%= Product.find(line_item.product_id).price %></td>
-                  <td><%= line_item.extended_price %></td>
-                </tr>
-              <% end %> 
-            <% end %>
-            </table>
-            </div>
+    <button class="collapsible"><%=Product.find(line_item.product_id).name %></button>
+      <!-- For this engine instance, loop through all the categories-->
+    <div class="content">
+      <table class="main">
+        <thead>
+          <tr class="head">
+            <th>Quantity</th>
+            <th>Product id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Unit Price</th>
+            <th>Color Click</th>
+            <th>Mono Click</th>
+          </tr>
+        </thead>
+        <% @categories.each do |cat| %>
+      
+          <% if cat == "Engine" %>
+            <% true %>
+          <% elsif @proposal.line_items.where(product_id: Product.all.where(category: cat)) == [] %>
+            <% true %>
+          <% else %>
+            <tr>
+              <td class="cat" colspan="7"><%= cat %></td>
+            </tr>
           <% end %>
+
+          <% @proposal.line_items.where(product_id: Product.all.where(category: cat, km_equipment: Product.find(line_item.product_id).km_equipment)).each do |li| %>
+            <tr>
+              <td><%= li.quantity %></td>
+              <td><%= Product.find(li.product_id).km_product_id %></td>
+              <td><%= Product.find(li.product_id).name %></td>
+              <td><%= Product.find(li.product_id).description %></td>
+              <td><%= li.extended_price %></td>
+              <td><%= li.color_cpi %></td>
+              <td><%= li.mono_cpi %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+  <% end %>
     
     <h1>The total price for this proposal is: $<%= @total_price %></h1>
 

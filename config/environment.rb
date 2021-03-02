@@ -2,6 +2,7 @@ ENV['SINATRA_ENV'] ||= "development"
 
 require 'bundler/setup'
 Bundler.require(:default, ENV['SINATRA_ENV'])
+require 'rack-flash'
 
 def fi_check_migration
   begin
@@ -19,3 +20,8 @@ ActiveRecord::Base.establish_connection(
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 require_all 'app'
+require "carrierwave/orm/activerecord"
+
+CarrierWave.configure do |config|
+  config.root = File.dirname(__FILE__) + "/public"
+end

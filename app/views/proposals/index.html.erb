@@ -4,15 +4,126 @@
 
 </head>
 <body>
+
+<style>
+
+.content {
+  width: 65%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.empty {
+  width: 65%;
+  height: 60px;
+}
+  
+  
+  .collapsible {
+    background-color: rgb(181, 201, 247);
+    color:rgb(0, 0, 0);
+    cursor: pointer;
+    text-align: center;
+    font-size: .9em;
+    width: 65%;
+    height: 40px;
+    outline: none;
+    border: none;
+    position: relative;
+    font-weight: bold;
+  }
+
+  .collapsible::after {
+    content: "\25BE";
+    font-size: 2rem;
+    position:absolute;
+    right:1rem;
+    bottom:10%;
+    transition: transform 0.2s ease-in-out;
+
+  }
+
+  .collapsible.active::after {
+    /* content: "\2212"; */
+    transform: rotate(180deg);
+  }
+
+  .accordian-item-body-content {
+    border-top: 1px solid black;
+    border-image: linear-gradient(to right, transparent, black, transparent) 1;
+  }
+
+  .active, .collapsible:hover {
+  background-color: rgb(101, 128, 193);
+  }
+
+  .proposals {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+  .proposal {
+    width: 24.5%;
+    height: 60px;
+    background-color: rgb(159, 238, 210);
+    margin: 1px;
+    cursor: pointer;
+  }
+</style>
   <h1>Here are all the proposals associated with <%= @user.username %>:</h1>
   
-  <ul>
-  <% @user.proposals.each do |proposal| %>
-    <li><%= Account.find(proposal.account_id).name%></li>
-    <ul>
-      <a href="/proposals/<%= proposal.id %>"><li></li><%= proposal.id %></li></a>
-    </ul>
-  <% end %>
-  </ul>
+  <% if flash.has?(:message) %>
+
+    <div>
+      <div><%= flash[:message] %></div>
+    </div>
+    <% end %>
+    
+  <div class="main">
+    <div class="accounts">
+      <% @user.accounts.sort {|a,b| a.name <=> b.name}.each do |acc| %>
+        <button class="collapsible"><%= acc.name %></button>
+
+        <% if acc.proposals == [] %>
+          <div class="content">
+            <div class="empty">
+            </div>
+          </div>
+        <% else %>
+          <div class="content">
+            <% acc.proposals.sort {|a, b| b.updated_at <=> a.updated_at}.each do |proposal| %>
+            <a href="/proposals/<%= proposal.id %>">
+              <button class="proposal">
+                <p>Last edited: <%= proposal.updated_at.getlocal.strftime "%b-%d-%Y %l:%M" %></p>
+                <p>Created on: <%= proposal.created_at.strftime "%b-%d-%Y" %></p>
+              </button>
+            </a>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+
+  <script>
+    const collapsibles = document.querySelectorAll(".collapsible");
+
+    collapsibles.forEach(collapsible => {
+      collapsible.addEventListener("click", event => {
+        collapsible.classList.toggle("active");
+        const content = collapsible.nextElementSibling;
+        if(collapsible.classList.contains("active")) {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+        else {
+          content.style.maxHeight = 0;
+        }
+      });
+    });
+
+  </script>
 </body>
 </html>
