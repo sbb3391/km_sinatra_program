@@ -207,7 +207,7 @@
               <td><%= Product.find(li.product_id).km_product_id %></td>
               <td><%= Product.find(li.product_id).name %></td>
               <td><%= Product.find(li.product_id).description %></td>
-              <td><%= li.extended_price %></td>
+              <td><%= FriendlyNumbers.number_to_currency(li.extended_price) %></td>
               <td><%= li.color_cpi %></td>
               <td><%= li.mono_cpi %></td>
             </tr>
@@ -217,7 +217,7 @@
     </div>
   <% end %>
     
-    <h1>The total price for this proposal is: $<%= @total_price %></h1>
+    <h1>The total price for this proposal is: <%= FriendlyNumbers.number_to_currency(@total_price) %></h1>
 
   <script>
     const collapsibles = document.querySelectorAll(".collapsible");

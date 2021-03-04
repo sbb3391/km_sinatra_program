@@ -59,7 +59,21 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    .flash {
+      background-color: rgb(231, 129, 129);
+      border: black solid 1px;
+      margin-top: 15px;
+      margin-left: 30px;
+      width: 400px;
+      height: 30px;
+    }
     
+    .flash p {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+    }
 
   </style>
 
@@ -76,8 +90,15 @@
         <% end %>
     </div>
 
-  </div>
+    
+    </div>
 
+    <% if flash.has?(:message) %>
+        <div class="flash">
+          <p><%= flash[:message] %></p>
+        </div>
+    <% end %>
+    
     <%= yield %>
   </body>
 </html>

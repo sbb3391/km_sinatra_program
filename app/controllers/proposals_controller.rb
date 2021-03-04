@@ -1,7 +1,4 @@
-require_relative '../../config/environment'
-
 class ProposalsController < ApplicationController
-
  
     # configure do
     #   set :public_folder, 'public'
@@ -80,9 +77,17 @@ class ProposalsController < ApplicationController
   post '/proposals' do
 
     account = Account.find(params[:proposal][:account_id])
-    
+
+    if params[:name] == ""
+      flash[:message] = "You must enter a proposal name"
+      redirect to '/proposals/new'
+    end
+
     #create a new proposal for the selected account
     @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
+
+    #add proposal name
+    @proposal.update(name: params[:name])
     
     #give the new proposal line items, based on the selections
     params[:proposal][:product_ids].each do |product|
@@ -100,8 +105,16 @@ class ProposalsController < ApplicationController
   patch "/proposals/:id/edit" do
     
     #existing line items in the current proposal
-    li = Proposal.find(params[:id]).line_items
-    ppi = Proposal.find(params[:id]).proposal_pricing_options
+    proposal = Proposal.find(params[:id])
+    li = proposal.line_items
+    ppi = proposal.proposal_pricing_options
+
+    #update name
+    x = params[:name]
+
+    if x != "" && proposal.name != x
+      proposal.update(name: x)
+    end
 
     #create or delete proposal pricing options
     #destroy existing proposal pricing options

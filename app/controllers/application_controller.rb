@@ -1,15 +1,4 @@
-require 'pry'
 require_relative '../../config/environment'
-
-# accounts
-#/accounts - let a user search through all their accounts, each one will be a link to that account's proposals
-#/accounts/:id - let a user search through all the proposals for a particular account id
-# proposals
-#/proposal - let user select from existing models they want to go into the proposal
-#/proposal/:id/accessories/edit - all accessories have a qty of 0, user can change the qty
-#/proposal/:id/edit - shows the stored value for all quantities, user can edit, also can add models to the proposal
-#/proposal/:id/view - lets the user view the completed proposal, can't edit in this screen
-
 
 class ApplicationController < Sinatra::Base
   
@@ -43,7 +32,7 @@ class ApplicationController < Sinatra::Base
       session[:id] = @user.authenticate(params[:password]).id
       redirect to '/proposals'
     else
-      redirect to '/'
+      redirect to '/proposals'
     end
   end
 
@@ -53,13 +42,24 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/signup' do
-    binding.pry
     if params[:username] == "" || params[:password] == ""
       redirect to '/signup'
     else
       @user = User.create(params)
       session[:id] = @user.id
-      redirect to '/home'
+
+      10.times do 
+        Account.create(
+          user_id: @user.id,
+          name: Faker::Company.unique.name,
+          address: Faker::Address.street_address,
+          city: Faker::Address.city,
+          state: Faker::Address.state,
+          zip: Faker::Address.zip_code
+        )
+      end
+
+      redirect to '/proposals'
     end
   end
 

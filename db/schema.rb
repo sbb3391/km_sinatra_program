@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_01_021829) do
+ActiveRecord::Schema.define(version: 2021_03_04_174133) do
 
   create_table "accounts", force: :cascade do |t|
     t.integer "user_id"
@@ -46,17 +46,8 @@ ActiveRecord::Schema.define(version: 2021_03_01_021829) do
     t.float "lease_rate_factor"
   end
 
-  create_table "products", force: :cascade do |t|
-    t.string "name"
-    t.string "km_product_id"
-    t.string "description"
-    t.decimal "price", default: "0.0"
-    t.string "km_equipment"
-    t.string "category"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "photo_validate"
-  end
+# Could not dump table "products" because of following StandardError
+#   Unknown type 'decmial' for column 'price'
 
   create_table "proposal_pricing_options", force: :cascade do |t|
     t.integer "pricing_option_id"
@@ -71,6 +62,7 @@ ActiveRecord::Schema.define(version: 2021_03_01_021829) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "show_summary"
+    t.string "name"
     t.index ["account_id"], name: "index_proposals_on_account_id"
   end
 

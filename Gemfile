@@ -32,3 +32,5 @@ gem 'wicked_pdf'
 
 gem 'wkhtmltopdf-binary'
 gem "grover", "~> 1.0"
+
+gem "friendly_numbers", "~> 0.6.0"

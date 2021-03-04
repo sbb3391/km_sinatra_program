@@ -42,6 +42,7 @@ GEM
     faker (2.16.0)
       i18n (>= 1.6, < 2)
     ffi (1.14.2)
+    friendly_numbers (0.6.0)
     grover (1.0.0)
       combine_pdf (~> 1.0)
       nokogiri (~> 1.0)
@@ -126,6 +127,7 @@ DEPENDENCIES
   csv
   database_cleaner (~> 1.6.0)
   faker (~> 2.16)
+  friendly_numbers (~> 0.6.0)
   grover (~> 1.0)
   pry
   pry-nav

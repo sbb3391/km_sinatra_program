@@ -214,6 +214,9 @@
     font-size: 1.8em;
   }
 
+  .srvc_option {
+    font-size: .6em;
+  }
 
   /* Summmary Page */
 
@@ -328,13 +331,13 @@
               <table>
                 <% if line_item.one_click_maximum != nil && line_item.one_click_maximum != "" %> 
                   <tr>
-                    <td>One click up to <%= line_item.one_click_maximum %></td>
+                    <td class=srvc_option>One click up to <%= line_item.one_click_maximum %></td>
                   </tr>
                 <% end %>
                 
                 <% if line_item.service_lock_years != nil && line_item.service_lock_years != "" %> 
                   <tr>
-                    <td>Service rates locked for <%= line_item.service_lock_years %> years</td>
+                    <td class="srvc_option">Service rates locked for <%= line_item.service_lock_years %> years</td>
                   </tr>
                 <% end %>
               </table>
@@ -354,7 +357,7 @@
                 
                   <tr>
                     <td><%= PricingOption.find(option.pricing_option_id).name %></td>
-                    <td>$<%= (PricingOption.find(option.pricing_option_id).lease_rate_factor) * product_price %></td>
+                    <td><%= FriendlyNumbers.number_to_currency((PricingOption.find(option.pricing_option_id).lease_rate_factor) * product_price) %></td>
                   </tr>
                 <% end %>
                 </table>

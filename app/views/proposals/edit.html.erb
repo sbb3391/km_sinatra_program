@@ -128,11 +128,18 @@ table {
     text-align: left;
     height: 40px;
   }
-    
+
   .qty {
       width: 75px;
       padding: 8px;
-      border: 0;
+      background-color: #f1f1f1;;
+      border: none;
+    }
+    
+  .cpc_input {
+      width: 75px;
+      padding: 8px;
+      border: black solid 2px;
       background-color: #f1f1f1;;
     }
 
@@ -311,6 +318,12 @@ table {
   <form action="/proposals/<%= @proposal.id %>/edit" method="POST">
     <input id="hidden" type="hidden" name="_method" value="patch">
 
+    <div>
+      <p>
+        <lable>Proposal Name:</lable>
+        <input type="text" name="proposal_name" value="<%= @proposal.name %>">
+      </p>
+    </div>
     
     <div class="pricing_options">
       <h2>Proposal Pricing Options:</h2>
@@ -394,9 +407,9 @@ table {
                 <td><%= drop.km_product_id %></td>
                 <td><%= drop.name %></td>
                 <td><%= drop.description %></td>
-                <td><%= drop.price %></td>
-                <td><input class="qty" type="string" value="<%= line_item.color_cpi if !!line_item.color_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.color_cpi %>"></td>
-                <td><input class="qty" type="string" value="<%= line_item.mono_cpi if !!line_item.mono_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.mono_cpi %>"></td>
+                <td><%= FriendlyNumbers.number_to_currency(drop.price) %></td>
+                <td><input class="cpc_input" type="string" value="<%= line_item.color_cpi if !!line_item.color_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.color_cpi %>"></td>
+                <td><input class="cpc_input" type="string" value="<%= line_item.mono_cpi if !!line_item.mono_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.mono_cpi %>"></td>
               </tr>
             <% elsif !!@proposal.line_items.find_by(product_id: drop.id) %>
               <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
@@ -405,7 +418,7 @@ table {
                 <td><%= drop.km_product_id %></td>
                 <td><%= drop.name %></td>
                 <td><%= drop.description %></td>
-                <td><%= drop.price %></td>
+                <td><%= FriendlyNumbers.number_to_currency(drop.price) %></td>
                 <tr>
               </tr>
             <% else %>
@@ -414,7 +427,7 @@ table {
                 <td><%= drop.km_product_id %></td>
                 <td><%= drop.name %></td>
                 <td><%= drop.description %></td>
-                <td><%= drop.price %></td>
+                <td><%= FriendlyNumbers.number_to_currency(drop.price) %></td>
               </tr>
             <% end %> 
           <% end %>

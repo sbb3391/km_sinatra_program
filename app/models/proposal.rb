@@ -1,5 +1,5 @@
 class Proposal < ActiveRecord::Base
-  has_many :line_items
+  has_many :line_items, dependent: :destroy
   belongs_to :account
   belongs_to :user
   has_many :products, through: :line_items

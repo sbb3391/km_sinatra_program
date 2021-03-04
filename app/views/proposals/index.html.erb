@@ -66,13 +66,33 @@
 
   .proposal {
     width: 24.5%;
-    height: 60px;
+    height: 75px;
     background-color: rgb(159, 238, 210);
     margin: 1px;
     cursor: pointer;
+    font-size: .7em;
+    padding: 0px;
   }
+
+  .buttons{
+      width: 65%;
+      background-color:white;
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+
+    }
 </style>
+
+<% if @user.accounts.empty? %>
+  <h1>You don't have any accounts. Add an account <a href="/accounts/new">here.</a></h1>
+<% else %>
   <h1>Here are all the proposals associated with <%= @user.username %>:</h1>
+
+  <div class="buttons">
+    <a href="/proposals/new"><button>Create a Proposal</button></a>
+  </div>
   
   <% if flash.has?(:message) %>
 
@@ -96,6 +116,7 @@
             <% acc.proposals.sort {|a, b| b.updated_at <=> a.updated_at}.each do |proposal| %>
             <a href="/proposals/<%= proposal.id %>">
               <button class="proposal">
+                <p>Proposal name: <%= proposal.name %></p>
                 <p>Last edited: <%= proposal.updated_at.getlocal.strftime "%b-%d-%Y %l:%M" %></p>
                 <p>Created on: <%= proposal.created_at.strftime "%b-%d-%Y" %></p>
               </button>
@@ -106,7 +127,7 @@
       <% end %>
     </div>
   </div>
-
+<% end %>
 
   <script>
     const collapsibles = document.querySelectorAll(".collapsible");

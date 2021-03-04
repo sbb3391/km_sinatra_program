@@ -8,16 +8,15 @@ require 'wicked_pdf'
 
 begin
   fi_check_migration
-
+  
   use WickedPdf::Middleware
   use Rack::MethodOverride
-  use AccountsController
   use ProposalsController
-  use UsersController
-  use LineItemsController
+  use AccountsController
   run ApplicationController
 rescue ActiveRecord::PendingMigrationError => err
   STDERR.puts err
+  puts err
   exit 1
 
 end

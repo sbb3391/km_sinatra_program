@@ -20,7 +20,6 @@ ActiveRecord::Base.establish_connection(
 # ActiveRecord::Base.logger = Logger.new(STDOUT)
 
 require_all 'app'
-require "carrierwave/orm/activerecord"
 
 CarrierWave.configure do |config|
   config.root = File.dirname(__FILE__) + "/public"
