@@ -17,11 +17,9 @@ class ProposalsController < ApplicationController
   end
 
   get '/proposals/new' do
-
-    redirect_to_login if !logged_in?
+    validate_user_and_proposal
 
     @engines = Product.all.where(category: "Engine")
-    @accounts = Account.all
 
     erb :'proposals/new.html'
 
@@ -30,20 +28,10 @@ class ProposalsController < ApplicationController
   get '/proposals/:id' do 
 
     #If no user is logged in, return to the login screen. If a user is logged in, but an invalid proposal id was passed, return to /proposals
-    redirect_to_login if !logged_in?
-    current_user
-    invalid_proposal_id if !current_user.proposals.include?(Proposal.find_by_id(params[:id]))
+    validate_user_and_proposal
+    categories
     
-    @proposal = Proposal.find_by_id(params[:id])
-    @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
-    
-    total_price = 0
-
-    @proposal.line_items.each do |line_item|
-      total_price += line_item.extended_price if line_item.extended_price != nil
-    end
-
-    @total_price = total_price
+    total_proposal_price
     
     erb :'proposals/show.html'
   end
@@ -51,25 +39,17 @@ class ProposalsController < ApplicationController
 
   get '/proposals/:id/line_items/new' do
 
-    redirect_to_login if !logged_in?
-    current_user
-    invalid_proposal_id if !current_user.proposals.include?(Proposal.find_by_id(params[:id]))
-
-    @proposal = Proposal.find(params[:id])
-    @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
+   validate_user_and_proposal
+   categories
 
     erb :'/proposals/new_line_items.html'
   end
 
   get '/proposals/:id/edit' do
+    validate_user_and_proposal
+    categories
 
-    redirect_to_login if !logged_in?
-    current_user
-    invalid_proposal_id if !current_user.proposals.include?(Proposal.find_by_id(params[:id]))
-
-    @proposal = Proposal.find(params[:id])
-    @categories = ["Engine", "Install", "Paper Supply", "Output", "Print Controller Options", "Misc."]
-
+    session[:proposal_id] = params[:id]
 
     erb :"proposals/edit.html"
   end 
@@ -78,10 +58,7 @@ class ProposalsController < ApplicationController
 
     account = Account.find(params[:proposal][:account_id])
 
-    if params[:name] == ""
-      flash[:message] = "You must enter a proposal name"
-      redirect to '/proposals/new'
-    end
+    flash_enter_proposal_name if params[:name] == ""
 
     #create a new proposal for the selected account
     @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
@@ -92,6 +69,20 @@ class ProposalsController < ApplicationController
     #give the new proposal line items, based on the selections
     params[:proposal][:product_ids].each do |product|
       @proposal.line_items.create(product_id: product.to_i, quantity: 1)
+
+      new_models_accessories = Product.all.where(km_equipment: Product.find(@proposal.line_items.last.product_id).km_equipment).map {|i| i.km_product_id}
+      new_model_power_supplies = new_models_accessories.select {|acc| power_supplies_for_default.include?(acc)}
+      new_model_power_supplies.each do |i|
+        prod = Product.find_by(km_product_id: i)
+        @proposal.line_items.create(product_id: prod.id, quantity: 1)
+      end
+
+      new_model_delivery_items = new_models_accessories.select {|acc| delivery_install_for_default.include?(acc)}
+      new_model_delivery_items.each do |i|
+        p = Product.find_by(km_product_id: i)
+        @proposal.line_items.create(product_id: p.id, quantity: 1)
+      end
+      # # ["ACC2011", "XGPCS20820DKM", "XGPCS15DKM", "7670525509", "7640018097", "7640012602"] 	XGPCS15DKM
     end
 
     #give the new proposal pricing options, based on the selections
@@ -103,89 +94,30 @@ class ProposalsController < ApplicationController
   end
 
   patch "/proposals/:id/edit" do
-    
-    #existing line items in the current proposal
-    proposal = Proposal.find(params[:id])
-    li = proposal.line_items
-    ppi = proposal.proposal_pricing_options
+    validate_user_and_proposal
+    #logic to make sure a user cannot hack the program by changing the html in chrome inspection tools
+    invalid_proposal_edit if params[:id] != session[:proposal_id]
 
     #update name
-    x = params[:name]
+    update_proposal_name
 
-    if x != "" && proposal.name != x
-      proposal.update(name: x)
-    end
+    create_proposal_pricing_options
 
-    #create or delete proposal pricing options
-    #destroy existing proposal pricing options
-    
-    ppi.destroy_all
-
-    #create new pricing options
-    params[:create_proposal_pricing_options][:pricing_option_ids].each do |option|
-      ppi.create(pricing_option_id: option.to_i)
-    end
-
-    
     #create, update, or destroy proposal line items
-    params[:line_item].each do |k,v|
-      item = li.find_by(product_id: Product.find(k.to_i))
-      #if the value is empty and that line item did not previosly exist, do nothing
-      if v == "" && item == nil
-        true
-      elsif v == "" && item != nil
-        item.destroy
-      #if a line item already exists for the key being evaluated and the value is greater than 0, update the quantity for line item
-      elsif v.to_i > 0 && item != nil
-        li.where(product_id: Product.find(k.to_i)).update(quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
-      #if a line item already exists for the key being evaluated and the value is less than or equal to zero, destroy that line_item
-      elsif v.to_i <= 0 && item != nil
-        item.destroy
-      #if the value passed in is 0 or a negative number, do nothing
-      elsif v.to_i <= 0
-        true
-      else
-        li.create(product_id: k.to_i, quantity: v.to_i, extended_price: Product.find(k.to_i).price.to_f * v.to_i)
-      end
-    end
+    proposal_line_items_crud
 
-    #update cost per impression data for engine models
-    params[:clicks].each do |k,v|
-      v[0] = nil if v[0] == ""
-      v[1] = nil if v[1] == ""
-      
-      li.find(k.to_i).update(color_cpi: v[0], mono_cpi: v[1])
-    end
+    update_cost_per_impressions
 
-    #edit line_item service options
-    #update service_lock
-    params[:lock].each do |k,v|
-      if v.to_i.is_a?(Integer) && v.to_i != 0
-        if li.find(k.to_i).service_lock_years != v.to_i
-          li.find(k.to_i).update(service_lock_years: v.to_i)
-        end
-      end
-    end
+    edit_line_item_service_options
 
-    #update one_click_maximum
-    params[:one_click].each do |k,v|
-      if li.find(k.to_i).one_click_maximum != v
-        li.find(k.to_i).update(one_click_maximum: v)
-      end
-    end
-
-    #update 'updated_at'
     Proposal.find(params[:id]).update(updated_at: Time.now)
 
-    #handle 'show_summary' option
-    Proposal.find(params[:id]).update(show_summary: params[:show_summary])
+    edit_show_summary
 
-    #remove units if checkbox is on
-    if params[:remove_item] != nil
-      params[:remove_item].each do |k,v|
-        li.where(product_id: Product.all.where(km_equipment: k)).destroy_all
-      end
-    end
+    remove_selected_units
+
+    #makes sure that there are not mistakes in the configuration so that invalid products are not created
+    proposal_validation
 
     redirect to "/proposals/#{params[:id]}"
   end
@@ -200,7 +132,7 @@ class ProposalsController < ApplicationController
     total_price = 0
 
     @proposal.line_items.each do |line_item|
-      total_price += line_item.extended_price
+      total_price += line_item.extended_price if line_item.extended_price != nil
     end
 
     @total_price = total_price
@@ -231,6 +163,7 @@ class ProposalsController < ApplicationController
     
     hash_key = Product.find(params["photo"].keys.first).km_equipment.to_sym
   
+    binding.pry
     
     if hash[hash_key] == ""
       true
@@ -239,13 +172,15 @@ class ProposalsController < ApplicationController
       li_for_image.image = params["photo"][params["photo"].keys.first]
       li_for_image.save!
 
-      File.rename(li_for_image.image.path, File.join(Dir.pwd, "public", "uploads", "#{hash[hash_key]}.jpg"))
+      File.rename(li_for_image.image.path, File.join(Dir.pwd, "public", "uploads", "#{hash[hash_key]}.png"))
     end
 
     redirect to "/proposals/#{params[:id]}/preview"
   end
 
   post '/proposals/:id/delete' do
+    #add logic to make sure user can only delete your own proposal
+
     proposal = Proposal.find(params[:id])
     proposal.destroy
     redirect to "/proposals"

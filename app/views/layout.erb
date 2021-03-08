@@ -66,13 +66,11 @@
       margin-top: 15px;
       margin-left: 30px;
       width: 400px;
-      height: 30px;
     }
     
-    .flash p {
-      display: flex;
-      text-align: center;
-      justify-content: center;
+    .message {
+      display: inline-flex;
+      align-items: center;
     }
 
   </style>
@@ -91,12 +89,28 @@
     </div>
 
     
-    </div>
+  </div>
+
+    <% if flash.has?(:messages) && flash.has?(:ids) != nil %>
+      <% flash_message_ids = flash[:ids] %>
+
+      <div class="flash">
+        <% flash[:messages].each do |message| %>
+          <div class="messages">
+            <div class="message">
+              => <%= message %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
 
     <% if flash.has?(:message) %>
-        <div class="flash">
-          <p><%= flash[:message] %></p>
+      <div class="flash"
+        <div class="message">
+          => <%= message %>
         </div>
+      </div>
     <% end %>
     
     <%= yield %>

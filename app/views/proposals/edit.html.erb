@@ -305,6 +305,10 @@ table {
     font-size: 1.8em;
   }
 
+  .flag {
+    background-color: rgb(255, 97, 97)
+  }
+
     </style>
 </head>
 <body>
@@ -397,11 +401,12 @@ table {
 
             <% Product.all.where(km_equipment: Product.find(line_item.product_id).km_equipment, category: cat).each do |drop| %>
             
+            <!-- If the product id is an engine, then give it a color cpc and mono cpc field -->
             <% if !!@proposal.line_items.find_by(product_id: drop.id) && cat == "Engine" %>
               <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
-
               <% li_color = line_item.color_cpi %>
               <% li_mono = line_item.mono_cpi %>
+
               <tr>
                 <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
                 <td><%= drop.km_product_id %></td>
@@ -411,20 +416,28 @@ table {
                 <td><input class="cpc_input" type="string" value="<%= line_item.color_cpi if !!line_item.color_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.color_cpi %>"></td>
                 <td><input class="cpc_input" type="string" value="<%= line_item.mono_cpi if !!line_item.mono_cpi %>" name="clicks[<%= line_item.id %>][]" id="<%= line_item.mono_cpi %>"></td>
               </tr>
+            <!-- if the proposal has a line item that matches this procduct id, then show that item's existing quantity. These will not have cpc fields -->
             <% elsif !!@proposal.line_items.find_by(product_id: drop.id) %>
               <% item_qty = @proposal.line_items.find_by(product_id: drop.id).quantity %>
               <tr>
                 <td><input class="qty" type="number" value="<%= item_qty %>" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
-                <td><%= drop.km_product_id %></td>
+                <% if flash.has?(:messages) && flash.has?(:ids) && flash[:ids].include?(drop.km_product_id) %>
+                  <td class="flag"><%= drop.km_product_id %></td>
+                <% else %>
+                  <td><%= drop.km_product_id %></td>
+                <% end %>
                 <td><%= drop.name %></td>
                 <td><%= drop.description %></td>
                 <td><%= FriendlyNumbers.number_to_currency(drop.price) %></td>
-                <tr>
               </tr>
             <% else %>
               <tr>
-                <td><input class="qty" type="number" name="line_item[<%= drop.id %>]" id="<%= item_qty %>qq"></td>
-                <td><%= drop.km_product_id %></td>
+                <td><input class="qty" type="number" name="line_item[<%= drop.id %>]" id="<%= item_qty %>"></td>
+                <%  if flash.has?(:messages) && flash.has?(:ids) && flash[:ids].include?(drop.km_product_id) %>
+                  <td class="flag"><%= drop.km_product_id %></td>
+                <% else %>
+                  <td><%= drop.km_product_id %></td>
+                <% end %>
                 <td><%= drop.name %></td>
                 <td><%= drop.description %></td>
                 <td><%= FriendlyNumbers.number_to_currency(drop.price) %></td>
@@ -455,8 +468,6 @@ table {
     });
 
   </script>
-
-  const num_divs = document.querySelectorAll(".")
 
 </body>
 </form>

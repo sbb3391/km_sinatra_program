@@ -1,13 +1,13 @@
 class AccountsController < ApplicationController
 
   get '/accounts' do
-    @user = User.find(session[:id])
+    current_user
 
     erb :'/accounts/index.html'
   end
 
   get '/accounts/new' do
-    @user = User.find(session[:id])
+    current_user
 
     erb :'/accounts/new.html'
   end
