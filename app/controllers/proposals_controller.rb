@@ -58,7 +58,7 @@ class ProposalsController < ApplicationController
 
     account = Account.find(params[:proposal][:account_id])
 
-    flash_enter_proposal_name if params[:name] == ""
+    new_proposal_validation
 
     #create a new proposal for the selected account
     @proposal = account.proposals.create(account_id: params[:proposal][:account_id].to_i)
@@ -162,8 +162,6 @@ class ProposalsController < ApplicationController
     end
     
     hash_key = Product.find(params["photo"].keys.first).km_equipment.to_sym
-  
-    binding.pry
     
     if hash[hash_key] == ""
       true

@@ -293,6 +293,25 @@ class ApplicationController < Sinatra::Base
       x = Product.import('./csv/delivery and install.csv')
       x.map {|a| a.to_s.chop}
     end
+
+    
+    def flash_enter_proposal_name
+      binding.pry
+      flash[:message] = "You must enter a proposal name"
+      redirect to '/proposals/new'
+    end
+
+    def new_proposal_validation
+      errors = []
+      errors << "your proposal must have a name" if params[:name] == ""
+      errors << "your proposal must have at least one pricing option" if params[:create_proposal_pricing_options] == nil
+      errors << "your proposal must have at least one model" if params[:proposal][:product_ids] == nil
+
+      if !errors.empty? 
+        flash[:messages] = errors
+        redirect to '/proposals/new'
+      end
+    end
   end
 
 
@@ -311,11 +330,6 @@ class ApplicationController < Sinatra::Base
 
   def invalid_proposal_edit
     flash[:message] = "Invalid Edit. You are not allowed to edit this proposal."
-
-  def flash_enter_proposal_name
-    flash[:message] = "You must enter a proposal name"
-    redirect to '/proposals/new'
-  end
 
 end
 end
